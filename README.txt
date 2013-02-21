@@ -1,3 +1,5 @@
+NOTE: This is a D8 port of Geofield by Brandonian for purely testing purposes. Don't expect it to actually work on a site.
+
                   __ _      _     _
                  / _(_)    | |   | |
  __ _  ___  ___ | |_ _  ___| | __| |
