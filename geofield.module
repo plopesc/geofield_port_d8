@@ -26,15 +26,27 @@ function geofield_field_info() {
     'geofield' => array(
       'label' => 'Geofield',
       'description' => t('This field stores geo information.'),
-      'default_widget' => 'geofield_wkt',
-      'default_formatter' => 'geofield_wkt',
+      'default_widget' => 'text_textfield',
+      'default_formatter' => 'text_plain',
+      'field item class' => 'Drupal\geofield\Type\GeofieldItem',
       'settings' => array(
-        'srid' => '4326',
         'backend' => 'default',
       ),
-      'property_type' => 'geofield',
-      'property_callbacks' => array('geofield_property_info_callback'),
-      'microdata' => TRUE,
     ),
   );
+}
+
+/**
+ * Implements hook_field_is_empty().
+ * @TODO: Handle empty geometries. (i.e., a WKT value of GEOMETRYCOLLECTION EMPTY)
+ */
+function geofield_field_is_empty($item, $field) {
+  return !isset($item['value']) || $item['value'] === '';
+}
+
+/**
+ * Implements hook_field_presave().
+ */
+function geofield_field_presave($entity, $field, $instance, $langcode, &$items) {
+  watchdog('geofield', 'Sanity check - geofield.module line 51');
 }
