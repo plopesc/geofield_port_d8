@@ -6,36 +6,6 @@
  */
 
 /**
- * Diameter of the Earth in kilometers.
- */
-define('GEOFIELD_KILOMETERS', 6371);
-
-/**
- * Diameter of the Earth in meters.
- */
-define('GEOFIELD_METERS', 6371000);
-
-/**
- * Diameter of the Earth in miles.
- */
-define('GEOFIELD_MILES', 3959);
-
-/**
- * Diameter of the Earth in yards.
- */
-define('GEOFIELD_YARDS', 6975175);
-
-/**
- * Diameter of the Earth in feet.
- */
-define('GEOFIELD_FEET', 20925525);
-
-/**
- * Diameter of the Earth in nautical miles.
- */
-define('GEOFIELD_NAUTICAL_MILES', 3444);
-
-/**
  * Implements hook_element_info().
  */
 

@@ -4,8 +4,8 @@
  * @TODO: Provide function/method to determine version.
  */
 
-/*require_once('geofield.elements.inc');
-require_once('geofield.widgets.inc');
+require_once('geofield.elements.inc');
+/*require_once('geofield.widgets.inc');
 require_once('geofield.formatters.inc');
 require_once('geofield.openlayers.inc');
 require_once('geofield.feeds.inc');
@@ -17,6 +17,36 @@ require_once('geofield.microdata.inc');*/
  * Max length of geohashes (imposed by database column length).
  */
 define('GEOFIELD_GEOHASH_LENGTH', 16);
+
+/**
+ * Diameter of the Earth in kilometers.
+ */
+define('GEOFIELD_KILOMETERS', 6371);
+
+/**
+ * Diameter of the Earth in meters.
+ */
+define('GEOFIELD_METERS', 6371000);
+
+/**
+ * Diameter of the Earth in miles.
+ */
+define('GEOFIELD_MILES', 3959);
+
+/**
+ * Diameter of the Earth in yards.
+ */
+define('GEOFIELD_YARDS', 6975175);
+
+/**
+ * Diameter of the Earth in feet.
+ */
+define('GEOFIELD_FEET', 20925525);
+
+/**
+ * Diameter of the Earth in nautical miles.
+ */
+define('GEOFIELD_NAUTICAL_MILES', 3444);
 
 /**
  * Implements hook_field_info().
@@ -49,4 +79,6 @@ function geofield_field_is_empty($item, $field) {
  */
 function geofield_field_presave($entity, $field, $instance, $langcode, &$items) {
   watchdog('geofield', 'Sanity check - geofield.module line 51');
+  dpm($entity);
+  dpm($field);
 }
