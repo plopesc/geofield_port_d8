@@ -57,7 +57,7 @@ class GeofieldItem extends FieldItemBase {
    */
   protected function populateComputedValues() {
     watchdog('geofield', 'Sanity check: GeofieldItem::populatedComputedValues, line 55');
-    $this->geo_type = 'Test';
+    $this->geo_type = 'test'; // @TODO: Actually populate this and other properties.
     geophp_load();
   }
 }
