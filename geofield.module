@@ -78,7 +78,7 @@ function geofield_field_is_empty($item, $field) {
  * Implements hook_field_presave().
  */
 function geofield_field_presave($entity, $field, $instance, $langcode, &$items) {
+  // @TODO: Find a way to load GeofieldItem object, and populate $items.
+  $items[0]['geo_type'] = 'test';
   watchdog('geofield', 'Sanity check - geofield.module line 51');
-  dpm($entity);
-  dpm($field);
 }

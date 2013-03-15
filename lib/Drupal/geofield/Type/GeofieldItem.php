@@ -32,6 +32,10 @@ class GeofieldItem extends FieldItemBase {
         'type' => 'string',
         'label' => t('Geometry'),
       );
+      static::$propertyDefinitions['geo_type'] = array(
+        'type' => 'string',
+        'label' => t('Geometry Type'),
+      );
     }
     return static::$propertyDefinitions;
   }
@@ -51,8 +55,9 @@ class GeofieldItem extends FieldItemBase {
   /**
    * Populates computed variables.
    */
-  protected populateComputedValues() {
+  protected function populateComputedValues() {
     watchdog('geofield', 'Sanity check: GeofieldItem::populatedComputedValues, line 55');
+    $this->geo_type = 'Test';
     geophp_load();
   }
 }
