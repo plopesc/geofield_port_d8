@@ -1,0 +1,6 @@
+name: Geofield
+description: Stores geographic and location data (points, lines, and polygons).
+core: 8.x
+dependencies:
+  - geophp
+package: Fields
