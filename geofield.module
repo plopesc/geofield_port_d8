@@ -80,7 +80,15 @@ function geofield_field_is_empty($item, $field) {
 function geofield_field_presave($entity, $field, $instance, $langcode, &$items) {
   $geofield_name = $instance->definition['field_name'];
   foreach ($items as $delta => $item) {
+    // @TODO: There must be a better way to do this. :-(
     $items[$delta]['geo_type'] = $entity->get($geofield_name)->offsetGet($delta)->get('geo_type')->getValue();
+    $items[$delta]['lat'] = $entity->get($geofield_name)->offsetGet($delta)->get('lat')->getValue();
+    $items[$delta]['lon'] = $entity->get($geofield_name)->offsetGet($delta)->get('lon')->getValue();
+    $items[$delta]['left'] = $entity->get($geofield_name)->offsetGet($delta)->get('left')->getValue();
+    $items[$delta]['top'] = $entity->get($geofield_name)->offsetGet($delta)->get('top')->getValue();
+    $items[$delta]['right'] = $entity->get($geofield_name)->offsetGet($delta)->get('right')->getValue();
+    $items[$delta]['bottom'] = $entity->get($geofield_name)->offsetGet($delta)->get('bottom')->getValue();
+    $items[$delta]['geohash'] = $entity->get($geofield_name)->offsetGet($delta)->get('geohash')->getValue();
   }
   watchdog('geofield', 'Sanity check - geofield.module line 51');
 }

@@ -7,6 +7,8 @@
 
 namespace Drupal\geofield\Type;
 
+use Drupal;
+use geoPHP;
 use Drupal\Core\Entity\Field\FieldItemBase;
 
 /**
@@ -36,6 +38,34 @@ class GeofieldItem extends FieldItemBase {
         'type' => 'string',
         'label' => t('Geometry Type'),
       );
+      static::$propertyDefinitions['lat'] = array(
+        'type' => 'float',
+        'label' => t('Latitude'),
+      );
+      static::$propertyDefinitions['lon'] = array(
+        'type' => 'float',
+        'label' => t('Longitude'),
+      );
+      static::$propertyDefinitions['left'] = array(
+        'type' => 'float',
+        'label' => t('Left Bounding'),
+      );
+      static::$propertyDefinitions['top'] = array(
+        'type' => 'float',
+        'label' => t('Top Bounding'),
+      );
+      static::$propertyDefinitions['right'] = array(
+        'type' => 'float',
+        'label' => t('Right Bounding'),
+      );
+      static::$propertyDefinitions['bottom'] = array(
+        'type' => 'float',
+        'label' => t('Bottom Bounding'),
+      );
+      static::$propertyDefinitions['geohash'] = array(
+        'type' => 'string',
+        'label' => t('Geohash'),
+      );
     }
     return static::$propertyDefinitions;
   }
@@ -47,7 +77,6 @@ class GeofieldItem extends FieldItemBase {
    *   An array of property values.
    */
   public function setValue($values) {
-    watchdog('geofield', 'Sanity check: GeofieldItem::setValue, line 46');
     parent::setValue($values);
     $this->populateComputedValues();
   }
@@ -56,8 +85,19 @@ class GeofieldItem extends FieldItemBase {
    * Populates computed variables.
    */
   protected function populateComputedValues() {
-    watchdog('geofield', 'Sanity check: GeofieldItem::populatedComputedValues, line 55');
-    $this->geo_type = 'test'; // @TODO: Actually populate this and other properties.
-    geophp_load();
+    Drupal::service('geophp');
+    $geom = geoPHP::load($this->value);
+
+    $centroid = $geom->getCentroid();
+    $bounding = $geom->getBBox();
+
+    $this->geo_type = $geom->geometryType();
+    $this->lat = $centroid->getX();
+    $this->lon = $centroid->getY();
+    $this->left = $bounding['minx'];
+    $this->top = $bounding['maxy'];
+    $this->right = $bounding['maxx'];
+    $this->bottom = $bounding['miny'];
+    $this->geohash = $geom->out('geohash');
   }
 }
