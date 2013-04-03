@@ -1,6 +1,7 @@
 <?php
 
-$plugin = array(
+function geofield_backend($key = 'default') {
+ $backends = array('default' => array(
   'title' => 'Default',
   'schema' => 'geofield_backend_default_schema',
   'save' => 'geofield_backend_default_save',
@@ -11,7 +12,9 @@ $plugin = array(
   'delete_field' => NULL,   // Callback after deleting field. Could be used for removing indexes and other cleanup.
   'requirements' => NULL, // Callback to check system requirements
   'settings' => NULL,     // Callback for plugin-specific settings.
-);
+ ));
+ return ($key == 'all') ? $backends : $backends[$key];
+}
 
 function geofield_backend_default_schema($fielddef) {
   return array(

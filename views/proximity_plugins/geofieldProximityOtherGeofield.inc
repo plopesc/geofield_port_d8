@@ -13,7 +13,7 @@ class geofieldProximityOtherGeofield extends geofieldProximityBase implements ge
   }
 
   public function options_form(&$form, &$form_state, $views_plugin) {
-    $handlers = $views_plugin->view->display_handler->get_handlers('field');
+    $handlers = $views_plugin->view->display_handler->getHandlers('field');
     $other_geofield_options = array(
       '' => '- None -',
     );
@@ -29,9 +29,8 @@ class geofieldProximityOtherGeofield extends geofieldProximityBase implements ge
       '#description' => t('List of other geofields attached to this view.'),
       '#default_value' => $views_plugin->options['geofield_proximity_other_geofield'],
       '#options' => $other_geofield_options,
-      '#dependency' => array(
-        'edit-options-source' => array('other_geofield'),
-      ),
+      '#states' => array('visible' => array(
+			  '#edit-options-source' => array('value' => 'other_geofield')))
     );
   }
 

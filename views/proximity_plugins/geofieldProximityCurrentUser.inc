@@ -27,9 +27,8 @@ class geofieldProximityCurrentUser extends geofieldProximityBase implements geof
       '#title' => t('Source Field'),
       '#default_value' => $views_plugin->options['geofield_proximity_current_user_field'],
       '#options' => $field_options,
-      '#dependency' => array(
-        'edit-options-source' => array('current_user'),
-      ),
+      '#states' => array('visible' => array(
+				'#edit-options-source' => array('value' => 'current_user')))
     );
   }
 
@@ -41,7 +40,7 @@ class geofieldProximityCurrentUser extends geofieldProximityBase implements geof
     $delta = $views_plugin->options['geofield_proximity_current_user_delta'];
 
     if (!empty($geofield_name)) {
-      $field_data = field_get_items('user', $user_object, $geofield_name);
+      $field_data = field_get_items($user_object, $geofield_name);
 
       if ($field_data != FALSE) {
         return array(
