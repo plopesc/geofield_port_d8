@@ -1,0 +1,7 @@
+name: Geofield Map
+description: 'Provides a basic mapping interface for Geofield.'
+version: VERSION
+core: 8.x
+dependencies:
+  - geofield
+package: Fields

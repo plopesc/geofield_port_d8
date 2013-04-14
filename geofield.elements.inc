@@ -5,6 +5,8 @@
  * Provides FormAPI element callbacks for geofield_latlon and geofield_proximity.
  */
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Implements hook_element_info().
  */
@@ -323,7 +325,7 @@ function theme_geofield_proximity($vars) {
   if (isset($element['#children']))
     $element['#children'] = '<div id="' . $element['#id'] . '" ' . drupal_attributes($wrapper_attributes) . '>' . $element['#children'] . '</div>';
 
-  $output = '<div ' . drupal_attributes($attributes) . '>' . theme('form_element', $element) . '</div>';
+  $output = '<div ' . new Attribute($attributes) . '>' . theme('form_element', $element) . '</div>';
 
   return $output;
 }

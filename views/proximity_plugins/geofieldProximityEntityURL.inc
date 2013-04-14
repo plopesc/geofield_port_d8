@@ -30,9 +30,8 @@ class geofieldProximityEntityURL extends geofieldProximityBase implements geofie
       '#title' => t('Entity Type'),
       '#default_value' => $views_plugin->options['geofield_proximity_entity_url_entity_type'],
       '#options' => $entity_options,
-      '#dependency' => array(
-        'edit-options-source' => array('entity_from_url'),
-      ),
+      '#states' => array('visible' => array(
+				 '#edit-options-source' => array('value' => 'entity_from_url')))
     );
 
     $geofields = _geofield_get_geofield_fields();
@@ -46,9 +45,8 @@ class geofieldProximityEntityURL extends geofieldProximityBase implements geofie
       '#title' => t('Source Field'),
       '#default_value' => $views_plugin->options['geofield_proximity_entity_url_field'],
       '#options' => $field_options,
-      '#dependency' => array(
-        'edit-options-source' => array('entity_from_url'),
-      ),
+      '#states' => array('visible' => array(
+			  '#edit-options-source' => array('value' => 'entity_from_url')))
     );
   }
 
@@ -59,7 +57,7 @@ class geofieldProximityEntityURL extends geofieldProximityBase implements geofie
 
     $entity = menu_get_object($entity_type);
     if (isset($entity) && !empty($geofield_name)) {
-      $field_data = field_get_items($entity_type, $entity, $geofield_name);
+      $field_data = field_get_items($entity, $geofield_name);
 
       if ($field_data != FALSE) {
         return array(

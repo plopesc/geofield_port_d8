@@ -10,6 +10,7 @@
  */
 function geofield_field_schema($field) {
 
+  $schema_callback = 'geofield_backend_default_schema';
   /**
    * @TODO: Rewrite to use core plugin system.
    */
@@ -38,13 +39,16 @@ function geofield_field_schema($field) {
 
   $geom_schema = $schema_callback($field);*/
 
+  module_load_include('inc', 'geofield', 'includes/geofield_backend/default');
+
   return array(
     'columns' => array(
-      'value' => array(
+      'value' => $schema_callback($field),
+     /*'value' => array(
         'type' => 'blob',
         'size' => 'big',
         'not null' => FALSE,
-      ),
+      ),*/
       'geo_type' => array(
         'type' => 'varchar',
         'default' => '',

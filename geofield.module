@@ -81,6 +81,7 @@ function geofield_field_presave($entity, $field, $instance, $langcode, &$items) 
   $geofield_name = $instance->definition['field_name'];
   foreach ($items as $delta => $item) {
     // @TODO: There must be a better way to do this. :-(
+    $f = $entity->get($geofield_name);
     $items[$delta]['geo_type'] = $entity->get($geofield_name)->offsetGet($delta)->get('geo_type')->getValue();
     $items[$delta]['lat'] = $entity->get($geofield_name)->offsetGet($delta)->get('lat')->getValue();
     $items[$delta]['lon'] = $entity->get($geofield_name)->offsetGet($delta)->get('lon')->getValue();

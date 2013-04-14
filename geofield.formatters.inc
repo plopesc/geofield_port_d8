@@ -5,6 +5,8 @@
  * Drupal field formatter hooks and helper functions.
  */
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Implements hook_field_formatter_info().
  */
@@ -212,7 +214,7 @@ function geofield_field_formatter_settings_summary($field, $instance, $view_mode
 /**
  * Implements hook_field_formatter_view().
  */
-function geofield_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+function geofield_field_formatter_view($entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
 
   // First check to see if we have any value and remove any unset deltas
@@ -371,13 +373,13 @@ function _geofield_item_microdata_propertyvalue($entity, $instance, $item) {
   if ($item['geo_type'] == 'point') {
     foreach (array('lat', 'lon') as $property) {
       $microdata[$property]['#attributes']['content'] = $item[$property];
-      $output .= '<meta' . drupal_attributes($microdata[$property]['#attributes']) .' />';
+      $output .= '<meta' . new Attribute($microdata[$property]['#attributes']) .' />';
     }
   }
   else {
     $schemaorg_shape = geofield_schemaorg_shape($item);
     $microdata['schemaorg_shape']['#attributes']['content'] = $schemaorg_shape;
-    $output .= '<meta' . drupal_attributes($microdata['schemaorg_shape']['#attributes']) .' />';
+    $output .= '<meta' . new Attribute($microdata['schemaorg_shape']['#attributes']) .' />';
   }
 
   return $output;

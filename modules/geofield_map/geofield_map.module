@@ -1,15 +1,6 @@
 <?php
 
-/**
- * Implements hook_views_api().
- */
-
-function geofield_map_views_api() {
-  return array(
-    'api' => '3.0-alpha1',
-    'path' => drupal_get_path('module', 'geofield_map') . '/includes',
-  );
-}
+use Drupal\Core\Template\Attribute;
 
 /**
  * Implements hook_field_formatter_info().
@@ -47,10 +38,8 @@ function geofield_map_field_formatter_info() {
  * Implements hook_field_formatter_view().
  */
 
-function geofield_map_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+function geofield_map_field_formatter_view($entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
-
-  list($entity_id) = entity_extract_ids($entity_type, $entity);
 
   $settings = $display['settings'];
 
@@ -63,14 +52,17 @@ function geofield_map_field_formatter_view($entity_type, $entity, $field, $insta
     if (!empty($geometry)) {
       $datum = json_decode($geometry->out('json'));
       $datum->properties = array(
-        'description' => entity_label($entity_type, $entity),
+        'description' => $entity->label($langcode),
       );
       $data[] = $datum;
     }
   }
 
   if (!empty($data)) {
-    $map_id = drupal_html_id("geofield_map_entity_{$entity_type}_{$entity_id}_{$field['field_name']}");
+    $type = $entity->entityType();
+	  $id = $entity->id();
+		$field_name = $field['field_name'];
+		$map_id = drupal_html_id("geofield_map_entity_{$type}_{$id}_{$field_name}");
 
     $js_settings = array(
       $map_id => array(
@@ -98,7 +90,7 @@ function geofield_map_field_formatter_view($entity_type, $entity, $field, $insta
           array('data' => array('geofieldMap' => $js_settings), 'type' => 'setting'),
         )
       ),
-      '#markup' => '<div' . drupal_attributes($container_attributes) . '></div>',
+      '#markup' => '<div' . new Attribute($container_attributes) . '></div>',
     );
   }
 
@@ -267,7 +259,7 @@ function geofield_map_settings_form($settings, $element = array()) {
   $element['geofield_map_baselayers_physical'] = array(
     '#type' => 'checkbox',
     '#title' => t('Terrain map'),
-    '#description' => t('Map with physical data (terrain, vegetation.)'),
+    '#description' => t('Map with physical data (terrain, vegetation)'),
     '#default_value' => $settings['geofield_map_baselayers_physical'],
     '#return_value' => 1,
     '#suffix' => '</fieldset>',
