@@ -60,7 +60,7 @@ function geofield_field_info() {
       'default_formatter' => 'text_plain',
       'field item class' => 'Drupal\geofield\Type\GeofieldItem',
       'settings' => array(
-        'backend' => 'default',
+        'backend' => 'geofield_backend_default',
       ),
     ),
   );
@@ -76,20 +76,27 @@ function geofield_field_is_empty($item, $field) {
 
 /**
  * Implements hook_field_presave().
+ *  - There's a decent chance this hook will go away in favor of a method on the field item class.
  */
 function geofield_field_presave($entity, $field, $instance, $langcode, &$items) {
-  $geofield_name = $instance->definition['field_name'];
+  $field_info = $instance->getField();
+  $geofield_name = $field_info->id;
+
+  // @TODO: actually check field settings ($field['settings']['backend'])
+  $backendPlugin = \Drupal::service('plugin.manager.geofield_backend')->createInstance('geofield_backend_default');
+
+  $field = $entity->get($geofield_name);
+
   foreach ($items as $delta => $item) {
     // @TODO: There must be a better way to do this. :-(
-    $f = $entity->get($geofield_name);
-    $items[$delta]['geo_type'] = $entity->get($geofield_name)->offsetGet($delta)->get('geo_type')->getValue();
-    $items[$delta]['lat'] = $entity->get($geofield_name)->offsetGet($delta)->get('lat')->getValue();
-    $items[$delta]['lon'] = $entity->get($geofield_name)->offsetGet($delta)->get('lon')->getValue();
-    $items[$delta]['left'] = $entity->get($geofield_name)->offsetGet($delta)->get('left')->getValue();
-    $items[$delta]['top'] = $entity->get($geofield_name)->offsetGet($delta)->get('top')->getValue();
-    $items[$delta]['right'] = $entity->get($geofield_name)->offsetGet($delta)->get('right')->getValue();
-    $items[$delta]['bottom'] = $entity->get($geofield_name)->offsetGet($delta)->get('bottom')->getValue();
-    $items[$delta]['geohash'] = $entity->get($geofield_name)->offsetGet($delta)->get('geohash')->getValue();
+    $items[$delta]['value'] = $backendPlugin->save($field->offsetGet($delta)->get('value')->getValue());
+    $items[$delta]['geo_type'] = $field->offsetGet($delta)->get('geo_type')->getValue();
+    $items[$delta]['lat'] = $field->offsetGet($delta)->get('lat')->getValue();
+    $items[$delta]['lon'] = $field->offsetGet($delta)->get('lon')->getValue();
+    $items[$delta]['left'] = $field->offsetGet($delta)->get('left')->getValue();
+    $items[$delta]['top'] = $field->offsetGet($delta)->get('top')->getValue();
+    $items[$delta]['right'] = $field->offsetGet($delta)->get('right')->getValue();
+    $items[$delta]['bottom'] = $field->offsetGet($delta)->get('bottom')->getValue();
+    $items[$delta]['geohash'] = $field->offsetGet($delta)->get('geohash')->getValue();
   }
-  watchdog('geofield', 'Sanity check - geofield.module line 51');
 }

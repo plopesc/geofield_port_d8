@@ -29,45 +29,45 @@ class GeofieldItem extends FieldItemBase {
    * Implements ComplexDataInterface::getPropertyDefinitions().
    */
   public function getPropertyDefinitions() {
-    if (!isset(static::$propertyDefinitions)) {
-      static::$propertyDefinitions['value'] = array(
+    if (!isset(self::$propertyDefinitions)) {
+      self::$propertyDefinitions['value'] = array(
         'type' => 'string',
         'label' => t('Geometry'),
       );
-      static::$propertyDefinitions['geo_type'] = array(
+      self::$propertyDefinitions['geo_type'] = array(
         'type' => 'string',
         'label' => t('Geometry Type'),
       );
-      static::$propertyDefinitions['lat'] = array(
+      self::$propertyDefinitions['lat'] = array(
         'type' => 'float',
         'label' => t('Latitude'),
       );
-      static::$propertyDefinitions['lon'] = array(
+      self::$propertyDefinitions['lon'] = array(
         'type' => 'float',
         'label' => t('Longitude'),
       );
-      static::$propertyDefinitions['left'] = array(
+      self::$propertyDefinitions['left'] = array(
         'type' => 'float',
         'label' => t('Left Bounding'),
       );
-      static::$propertyDefinitions['top'] = array(
+      self::$propertyDefinitions['top'] = array(
         'type' => 'float',
         'label' => t('Top Bounding'),
       );
-      static::$propertyDefinitions['right'] = array(
+      self::$propertyDefinitions['right'] = array(
         'type' => 'float',
         'label' => t('Right Bounding'),
       );
-      static::$propertyDefinitions['bottom'] = array(
+      self::$propertyDefinitions['bottom'] = array(
         'type' => 'float',
         'label' => t('Bottom Bounding'),
       );
-      static::$propertyDefinitions['geohash'] = array(
+      self::$propertyDefinitions['geohash'] = array(
         'type' => 'string',
         'label' => t('Geohash'),
       );
     }
-    return static::$propertyDefinitions;
+    return self::$propertyDefinitions;
   }
 
   /**
@@ -76,7 +76,7 @@ class GeofieldItem extends FieldItemBase {
    * @param array|null $values
    *   An array of property values.
    */
-  public function setValue($values) {
+  public function setValue($values, $notify = TRUE) {
     parent::setValue($values);
     $this->populateComputedValues();
   }

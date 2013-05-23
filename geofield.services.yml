@@ -1,0 +1,4 @@
+services:
+  plugin.manager.geofield_backend:
+    class: Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager
+    arguments: ['@container.namespaces']

@@ -5,45 +5,25 @@
  * Install, update and uninstall functions for the geofield module.
  */
 
+use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
+
 /**
  * Implements hook_field_schema().
  */
 function geofield_field_schema($field) {
+  $backendManager = \Drupal::service('plugin.manager.geofield_backend');
 
-  $schema_callback = 'geofield_backend_default_schema';
-  /**
-   * @TODO: Rewrite to use core plugin system.
-   */
-  /*$schema_callback = '';
-  ctools_include('plugins');
+  // @TODO: Check to see if backend setting is a valid plugin
   if (isset($field['settings']['backend'])) {
-    $backend = ctools_get_plugins('geofield', 'geofield_backend', $field['settings']['backend']);
-
+    $backendPlugin = $backendManager->createInstance('geofield_backend_default');
   }
   else {
-    $backend = ctools_get_plugins('geofield', 'geofield_backend', 'default');
+    $backendPlugin = $backendManager->createInstance('geofield_backend_default');
   }
-
-  if (!empty($backend['schema'])) {
-    $schema_callback = $backend['schema'];
-  } else {
-    /**
-     * Edge case, during an update between 7.x-1.x and 7.x-2.x, if ctools is enabled,
-     * ctools will not see the geofield plugin without manually truncating the cache 
-     * tables. To bypass, we manually seed the $backend array directly if 
-     * $backend['schema'] still isn't declared.
-     **
-    module_load_include('inc', 'geofield', 'includes/geofield_backend/default');
-    $schema_callback = 'geofield_backend_default_schema';
-  }
-
-  $geom_schema = $schema_callback($field);*/
-
-  module_load_include('inc', 'geofield', 'includes/geofield_backend/default');
 
   return array(
     'columns' => array(
-      'value' => $schema_callback($field),
+      'value' => $backendPlugin->schema(),
      /*'value' => array(
         'type' => 'blob',
         'size' => 'big',
