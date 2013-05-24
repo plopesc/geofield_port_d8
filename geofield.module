@@ -56,8 +56,8 @@ function geofield_field_info() {
     'geofield' => array(
       'label' => 'Geofield',
       'description' => t('This field stores geo information.'),
-      'default_widget' => 'text_textfield',
-      'default_formatter' => 'text_plain',
+      'default_widget' => 'geofield_default',
+      'default_formatter' => 'geofield_default',
       'field item class' => 'Drupal\geofield\Type\GeofieldItem',
       'settings' => array(
         'backend' => 'geofield_backend_default',
@@ -76,6 +76,7 @@ function geofield_field_is_empty($item, $field) {
 
 /**
  * Implements hook_field_validate().
+ * @TODO: At some point, this hook will probably turn into a method on the field controller class.
  */
 function geofield_field_validate(EntityInterface $entity = NULL, $field, $instance, $langcode, $items, &$errors) {
   Drupal::service('geophp');
