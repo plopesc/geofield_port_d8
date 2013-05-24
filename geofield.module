@@ -75,6 +75,41 @@ function geofield_field_is_empty($item, $field) {
 }
 
 /**
+ * Implements hook_field_validate().
+ */
+function geofield_field_validate(EntityInterface $entity = NULL, $field, $instance, $langcode, $items, &$errors) {
+  Drupal::service('geophp');
+
+  foreach ($items as $delta => $item) {
+    if (empty($item['value'])) {
+      return FALSE;
+    }
+
+    // @TODO: Not sure if this try/catch is still necessary. geoPHP use to throw exceptions with bad geoms,
+    // but no longer seems to do so. Not sure if I like that or not... /Brandonian
+    $error = FALSE;
+    try {
+      $value = geoPHP::load($item['value']);
+      if (empty($value)) {
+        $error = TRUE;
+      }
+    }
+    catch (Exception $e) {
+      $error = TRUE;
+    }
+
+    if ($error === TRUE) {
+      $errors[$field['field_name']][$langcode][$delta][] = array(
+        'error' => 'geofield_data_faulty',
+        'message' => t('%name: Specified location data is invalid.', array('%name' => $instance['label'])),
+      );
+    }
+  }
+
+  return $errors;
+}
+
+/**
  * Implements hook_field_presave().
  *  - There's a decent chance this hook will go away in favor of a method on the field item class.
  */
