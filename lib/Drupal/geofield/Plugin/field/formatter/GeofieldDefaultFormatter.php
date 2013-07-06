@@ -9,7 +9,7 @@ namespace Drupal\geofield\Plugin\field\formatter;
 
 use Drupal;
 use geoPHP;
-use Drupal\Component\Annotation\Plugin;
+use Drupal\field\Annotation\FieldFormatter;
 use Drupal\Core\Annotation\Translation;
 use Drupal\field\Plugin\Type\Formatter\FormatterBase;
 use Drupal\Core\Entity\EntityInterface;
@@ -17,8 +17,8 @@ use Drupal\Core\Entity\EntityInterface;
 /**
  * Plugin implementation of the 'geofield_default' formatter.
  *
- * @Plugin(
- *   id = "geofield_default",
+ * @FieldFormatter(
+ *   id = "geofield_formatter_default",
  *   module = "geofield",
  *   label = @Translation("Raw Output"),
  *   field_types = {
@@ -64,9 +64,16 @@ class GeofieldDefaultFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
+  public function prepareView(array $entities, $langcode, array &$items) {
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function viewElements(EntityInterface $entity, $langcode, array $items) {
     $elements = array();
-    Drupal::service('geophp');
+    Drupal::service('geophp.geophp');
 
     foreach ($items as $delta => $item) {
       $geom = geoPHP::load($item['value']);

@@ -15,7 +15,7 @@ use Drupal\field\Plugin\Type\Widget\WidgetBase;
  * Plugin implementation of the 'geofield_default' widget.
  *
  * @Plugin(
- *   id = "geofield_default",
+ *   id = "geofield_widget_default",
  *   module = "geofield",
  *   label = @Translation("Geofield"),
  *   field_types = {

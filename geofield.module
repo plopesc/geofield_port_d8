@@ -49,24 +49,6 @@ define('GEOFIELD_FEET', 20925525);
 define('GEOFIELD_NAUTICAL_MILES', 3444);
 
 /**
- * Implements hook_field_info().
- */
-function geofield_field_info() {
-  return array(
-    'geofield' => array(
-      'label' => 'Geofield',
-      'description' => t('This field stores geo information.'),
-      'default_widget' => 'geofield_default',
-      'default_formatter' => 'geofield_default',
-      'field item class' => 'Drupal\geofield\Type\GeofieldItem',
-      'settings' => array(
-        'backend' => 'geofield_backend_default',
-      ),
-    ),
-  );
-}
-
-/**
  * Implements hook_field_is_empty().
  * @TODO: Handle empty geometries. (i.e., a WKT value of GEOMETRYCOLLECTION EMPTY)
  */

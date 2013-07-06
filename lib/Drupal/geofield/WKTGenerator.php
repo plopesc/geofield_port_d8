@@ -3,14 +3,17 @@
 /**
  * @file
  * Helper class for generating random WKT/Geospatial data.
+ * Contains \Drupal\geofield\WKTGenerator.
  */
 
-class GeoGenerator {
+namespace Drupal\geofield;
+
+class WKTGenerator {
 
   /**
    * Helper to generate DD coordinates
    */
-  function dd_generate($min, $max, $int = FALSE) {
+  function DDGenerate($min, $max, $int = FALSE) {
     $func = 'rand';
     if (function_exists('mt_rand')) {
       $func = 'mt_rand';
@@ -28,7 +31,7 @@ class GeoGenerator {
    *
    * Try to keeps values sane, no shape is more than 100km across
    */
-  function wkt_generate() {
+  function WKTGenerate() {
     $types = array(
       'point',
       'linestring',
@@ -48,18 +51,18 @@ class GeoGenerator {
     return 'POINT (0 0)';
   }
 
-  function random_point() {
+  function RandomPoint() {
     $lon = $this->dd_generate(-180, 180);
     $lat = $this->dd_generate(-84, 84);
     return array($lon, $lat);
   }
 
-  function wkt_generate_point($point = FALSE) {
+  function WKTGeneratePoint($point = FALSE) {
     $point = $point ? $point : $this->random_point();
     return implode(' ', $point);
   }
 
-  function wkt_generate_multipoint() {
+  function WKTGenerateMultipoint() {
     $num = $this->dd_generate(1, 5, TRUE);
     $start = $this->random_point();
     $points[] = $this->wkt_generate_point($start);
@@ -73,7 +76,7 @@ class GeoGenerator {
   }
 
   // make a line that looks like a line
-  function wkt_generate_linestring($start = FALSE, $segments = FALSE) {
+  function WKTGenerateLinestring($start = FALSE, $segments = FALSE) {
     $start = $start ? $start : $this->random_point();
     $segments = $segments ? $segments : $this->dd_generate(1, 5, TRUE);
     $points[] = $start[0] . ' ' . $start[1];
@@ -88,7 +91,7 @@ class GeoGenerator {
   }
 
   // make a line that looks like a line
-  function wkt_generate_multilinestring() {
+  function WKTGenerateMultilinestring() {
     $start = $this->random_point();
     $num = $this->dd_generate(1, 3, TRUE);
     $lines[] = $this->wkt_generate_linestring($start);
@@ -101,7 +104,7 @@ class GeoGenerator {
     return '(' . implode('), (', $lines) . ')';
   }
 
-  function wkt_generate_polygon($start = FALSE, $segments = FALSE) {
+  function WKTGeneratePolygon($start = FALSE, $segments = FALSE) {
     $start = $start ? $start : $this->random_point();
     $segments = $segments ? $segments : $this->dd_generate(2, 4, TRUE);
     $poly = $this->wkt_generate_linestring($start, $segments);
@@ -109,7 +112,7 @@ class GeoGenerator {
     return '(' . $poly . ' , ' . $start[0] . ' ' . $start[1] . ')';
   }
 
-  function wkt_generate_multipolygon() {
+  function WKTGenerateMultipolygon() {
     $start = $this->random_point();
     $num = $this->dd_generate(1, 5, TRUE);
     $segments = $this->dd_generate(2, 3, TRUE);
