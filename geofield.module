@@ -49,14 +49,6 @@ define('GEOFIELD_FEET', 20925525);
 define('GEOFIELD_NAUTICAL_MILES', 3444);
 
 /**
- * Implements hook_field_is_empty().
- * @TODO: Handle empty geometries. (i.e., a WKT value of GEOMETRYCOLLECTION EMPTY)
- */
-function geofield_field_is_empty($item, $field) {
-  return !isset($item['value']) || $item['value'] === '';
-}
-
-/**
  * Implements hook_field_validate().
  * @TODO: At some point, this hook will probably turn into a method on the field controller class.
  */

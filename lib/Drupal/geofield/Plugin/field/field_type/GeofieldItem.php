@@ -13,6 +13,7 @@ use Drupal\Core\Entity\Annotation\FieldType;
 use Drupal\Core\Annotation\Translation;
 use Drupal\field\Plugin\Type\FieldType\ConfigFieldItemBase;
 use Drupal\field\Plugin\Core\Entity\Field;
+use Drupal\Core\Entity\Field\PrepareCacheInterface;
 use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
 
 /**
@@ -25,12 +26,12 @@ use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
  *   description = @Translation("This field stores geospatial information."),
  *   default_widget = "geofield_widget_default",
  *   default_formatter = "geofield_formatter_default",
- *   settings = {
+ *   instance_settings = {
  *     "backend" = "geofield_backend_default"
  *   }
  * )
  */
-class GeofieldItem extends ConfigFieldItemBase {
+class GeofieldItem extends ConfigFieldItemBase implements PrepareCacheInterface {
 
   /**
    * Definitions of the contained properties.
@@ -46,23 +47,19 @@ class GeofieldItem extends ConfigFieldItemBase {
    */
   public static function schema(Field $field) {
     $backendManager = \Drupal::service('plugin.manager.geofield_backend');
+    $backendPlugin = NULL;
 
-    // @TODO: Check to see if backend setting is a valid plugin
-    if (isset($field['settings']['backend'])) {
-      $backendPlugin = $backendManager->createInstance('geofield_backend_default');
-    }
-    else {
+    if (isset($field['settings']['backend']) && $backendManager->getDefinition($field['settings']['backend']) != NULL) {
+      $backendPlugin = $backendManager->createInstance($field['settings']['backend']);
+    } 
+
+    if ($backendPlugin === NULL) {
       $backendPlugin = $backendManager->createInstance('geofield_backend_default');
     }
 
     return array(
       'columns' => array(
         'value' => $backendPlugin->schema(),
-       /*'value' => array(
-          'type' => 'blob',
-          'size' => 'big',
-          'not null' => FALSE,
-        ),*/
         'geo_type' => array(
           'type' => 'varchar',
           'default' => '',
@@ -172,6 +169,34 @@ class GeofieldItem extends ConfigFieldItemBase {
   /**
    * {@inheritdoc}
    */
+  public function instanceSettingsForm(array $form, array &$form_state) {
+    // @TODO: Backend plugins need to define requirement/settings methods,
+    //   allow them to inject data here.
+    $element = array();
+
+    $backendManager = \Drupal::service('plugin.manager.geofield_backend');
+
+    $backends = $backendManager->getDefinitions();
+    $backendOptions = array();
+
+    foreach ($backends as $id => $backend) {
+      $backend_options[$id] = $backend['admin_label'];
+    }
+
+    $element['backend'] = array(
+      '#type' => 'select',
+      '#title' => t('Storage Backend'),
+      '#default_value' => $this->getInstance()->settings['backend'],
+      '#options' => $backend_options,
+      '#description' => t("Select the Geospatial storage backend you would like to use to store geofield geometry data. If you don't know what this means, select 'Default'."),
+    );
+
+    return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isEmpty() {
     $value = $this->get('value')->getValue();
     return !isset($value) || $value === '';
@@ -209,5 +234,12 @@ class GeofieldItem extends ConfigFieldItemBase {
       $this->bottom = $bounding['miny'];
       $this->geohash = $geom->out('geohash');
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareCache() {
+    
   }
 }
