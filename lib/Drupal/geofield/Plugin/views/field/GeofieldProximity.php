@@ -7,7 +7,7 @@
 
 namespace Drupal\geofield\Plugin\views\field;
 
-use Drupal\Component\Annotation\Plugin;
+use Drupal\Component\Annotation\PluginID;
 use Drupal\views\Plugin\views\field\Numeric;
 
 /**
@@ -15,13 +15,13 @@ use Drupal\views\Plugin\views\field\Numeric;
  *
  * @ingroup views_field_handlers
  *
- * @Plugin(
- *   id = "geofield_proximity",
- *   module = "geofield"
- * )
+ * @PluginID("geofield_proximity")
  */
 class GeofieldProximity extends Numeric {
 
+  /**
+   * {@inheritdoc}.
+   */
   protected function defineOptions() {
     $options = parent::defineOptions();
 
@@ -37,6 +37,9 @@ class GeofieldProximity extends Numeric {
     return $options;
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   public function buildOptionsForm(&$form, &$form_state) {
     parent::buildOptionsForm($form, $form_state);
 
@@ -64,20 +67,26 @@ class GeofieldProximity extends Numeric {
     );
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   public function validateOptionsForm(&$form, &$form_state) {
     $proximityPlugin = geofield_proximity_load_plugin($form_state['values']['options']['source']);
     $proximityPlugin->options_validate($form, $form_state, $this);
   }
 
   /**
-   * Overrides Drupal\views\Plugin\views\field\FieldPluginBase::get_value()
+   * {@inheritdoc}.
    */
-  public function get_value($values, $field = NULL) {
+  public function getValue($values, $field = NULL) {
     if (isset($values->{$this->field_alias})) {
       return $values->{$this->field_alias};
     }
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   public function query() {
     $this->ensureMyTable();
 

@@ -79,7 +79,6 @@ class GeofieldMap extends StylePluginBase {
   public function buildOptionsForm(&$form, &$form_state) {
     parent::buildOptionsForm($form, $form_state);
 
-  //$handlers = $this->display->handler->getHandlers('field');
     $handlers = $this->displayHandler->getHandlers('field');
     $data_source_options = $popup_source_options = array('' => '<none>');
 
@@ -129,6 +128,10 @@ class GeofieldMap extends StylePluginBase {
    */
   public function render() {
     geophp_load();
+    if (empty($this->view->style_plugin->options['data_source'])) {
+      drupal_set_message(t('A <strong>Data source</strong> must be selected in the Geofield map settings.'), 'error');
+      return '';
+    }
     $style_options = $this->view->style_plugin->options;
 
     $geo_data = (!empty($style_options['data_source'])) ? 'field_' . $style_options['data_source']: NULL;
@@ -138,11 +141,11 @@ class GeofieldMap extends StylePluginBase {
     $map_data = array();
     if ($geo_data) {
 
-      $this->render_fields($this->view->result);
+      $this->renderFields($this->view->result);
 
       foreach ($this->view->result as $id => $result) {
 
-        $geofield = $geofield_handler->get_value($result);
+        $geofield = $geofield_handler->getValue($result);
 
         // RdB: @todo: the above call returns empty, as the Geofield values
         // aren't in $this->view->result[$id], for some reason. So using
@@ -185,7 +188,7 @@ class GeofieldMap extends StylePluginBase {
 
       $map_settings = geofield_map_settings_do($style_options);
       
-      $view_name = $this->view->storage->human_name;
+      $view_name = $this->view->storage->get('label');
       $container_id = drupal_html_id($view_name . '_' . $this->view->current_display);
 
       $js_settings = array(

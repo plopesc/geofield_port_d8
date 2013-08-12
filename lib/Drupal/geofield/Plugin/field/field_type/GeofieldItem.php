@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\geofield\Type\GeofieldItem.
+ * Contains \Drupal\geofield\field\field_type\GeofieldItem.
  */
 
 namespace Drupal\geofield\Plugin\field\field_type;
@@ -12,7 +12,7 @@ use geoPHP;
 use Drupal\Core\Entity\Annotation\FieldType;
 use Drupal\Core\Annotation\Translation;
 use Drupal\field\Plugin\Type\FieldType\ConfigFieldItemBase;
-use Drupal\field\Plugin\Core\Entity\Field;
+use Drupal\field\FieldInterface;
 use Drupal\Core\Entity\Field\PrepareCacheInterface;
 use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
 
@@ -24,7 +24,7 @@ use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
  *   module = "geofield",
  *   label = @Translation("Geofield"),
  *   description = @Translation("This field stores geospatial information."),
- *   default_widget = "geofield_widget_default",
+ *   default_widget = "geofield_latlon",
  *   default_formatter = "geofield_formatter_default",
  *   instance_settings = {
  *     "backend" = "geofield_backend_default"
@@ -45,7 +45,7 @@ class GeofieldItem extends ConfigFieldItemBase implements PrepareCacheInterface 
   /**
    * {@inheritdoc}
    */
-  public static function schema(Field $field) {
+  public static function schema(FieldInterface $field) {
     $backendManager = \Drupal::service('plugin.manager.geofield_backend');
     $backendPlugin = NULL;
 
@@ -226,8 +226,8 @@ class GeofieldItem extends ConfigFieldItemBase implements PrepareCacheInterface 
       $bounding = $geom->getBBox();
 
       $this->geo_type = $geom->geometryType();
-      $this->lat = $centroid->getX();
-      $this->lon = $centroid->getY();
+      $this->lon = $centroid->getX();
+      $this->lat = $centroid->getY();
       $this->left = $bounding['minx'];
       $this->top = $bounding['maxy'];
       $this->right = $bounding['maxx'];

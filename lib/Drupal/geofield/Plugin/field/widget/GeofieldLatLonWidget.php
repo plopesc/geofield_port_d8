@@ -7,28 +7,28 @@
 
 namespace Drupal\geofield\Plugin\field\widget;
 
-use Drupal\Component\Annotation\Plugin;
+use Drupal\field\Annotation\FieldWidget;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Entity\Field\FieldInterface;
 use Drupal\field\Plugin\Type\Widget\WidgetBase;
 
 /**
  * Plugin implementation of the 'geofield_latlon' widget.
  *
- * @Plugin(
+ * @FieldWidget(
  *   id = "geofield_latlon",
- *   module = "geofield",
  *   label = @Translation("Latitude/Longitude"),
  *   field_types = {
  *     "geofield"
  *   },
-*   settings = {
+ *   settings = {
  *     "html5_geolocation" = false
  *   }
  * )
  */
 class GeofieldLatLonWidget extends WidgetBase {
   /**
-   * Implements \Drupal\field\Plugin\Type\Widget\WidgetInterface::settingsForm().
+   * {@inheritdoc}
    */
   public function settingsForm(array $form, array &$form_state) {
     $elements = parent::settingsForm($form, $form_state);
@@ -43,42 +43,37 @@ class GeofieldLatLonWidget extends WidgetBase {
   }
 
   /**
-   * Implements \Drupal\field\Plugin\Type\Widget\WidgetInterface::formElement().
+   * {@inheritdoc}
    */
-  public function formElement(array $items, $delta, array $element, $langcode, array &$form, array &$form_state) {
-    $instance = $this->instance;
+  public function formElement(FieldInterface $items, $delta, array $element, $langcode, array &$form, array &$form_state) {
 
     $latlon_value = array(
       'lat' => '',
       'lon' => '',
     );
-
-    if (isset($items[$delta]['lat'])) {
-      $latlon_value['lat'] = floatval($items[$delta]['lat']);
+    if (isset($items[$delta]->lat)) {
+      $latlon_value['lat'] = floatval($items[$delta]->lat);
     }
-    if (isset($items[$delta]['lon'])) {
-      $latlon_value['lon'] = floatval($items[$delta]['lon']);
+    if (isset($items[$delta]->lon)) {
+      $latlon_value['lon'] = floatval($items[$delta]->lon);
     }
 
-    $element['value'] = array(
+    $element += array(
       '#type' => 'geofield_latlon',
-      '#title' => check_plain($instance['label']),
-      '#description' => check_plain($element['#description']),
       '#default_value' => $latlon_value,
-      '#required' => $element['#required'],
       '#geolocation' => $this->getSetting('html5_geolocation'),
     );
 
-    return $element;
+    return array('value' => $element);
   }
 
   /**
-   * Implements \Drupal\field\Plugin\Type\Widget\WidgetInterface::massageFormValues().
+   * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, array &$form_state) {
     foreach ($values as $delta => $value) {
       if (!empty($value['value']['lat']) && !empty($value['value']['lon'])) {
-        $values[$delta]['value'] = 'POINT(' . $value['value']['lat'] . ' ' . $value['value']['lon'] . ')';
+        $values[$delta]['value'] = 'POINT(' . $value['value']['lon'] . ' ' . $value['value']['lat'] . ')';
       }
       else {
         $values[$delta]['value'] = '';

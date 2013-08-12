@@ -7,7 +7,7 @@
 
 namespace Drupal\geofield\Plugin\views\sort;
 
-use Drupal\Component\Annotation\Plugin;
+use Drupal\Component\Annotation\PluginID;
 use Drupal\views\Plugin\views\sort\SortPluginBase;
 
 /**
@@ -15,10 +15,7 @@ use Drupal\views\Plugin\views\sort\SortPluginBase;
  *
  * @ingroup views_field_handlers
  *
- * @Plugin(
- *   id = "geofield_proximity",
- *   module = "geofield"
- * )
+ * @PluginID("geofield_proximity")
  */
 class GeofieldProximity extends SortPluginBase {
 

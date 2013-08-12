@@ -7,7 +7,7 @@
 
 namespace Drupal\geofield\Plugin\views\filter;
 
-use Drupal\Component\Annotation\Plugin;
+use Drupal\Component\Annotation\PluginID;
 use Drupal\views\Plugin\views\filter\Numeric;
 
 /**
@@ -15,10 +15,7 @@ use Drupal\views\Plugin\views\filter\Numeric;
  *
  * @ingroup views_field_handlers
  *
- * @Plugin(
- *   id = "geofield_proximity",
- *   module = "geofield"
- * )
+ * @PluginID("geofield_proximity")
  */
 class GeofieldProximity extends Numeric {
 
@@ -47,49 +44,49 @@ class GeofieldProximity extends Numeric {
     $operators = array(
       '<' => array(
         'title' => t('Is less than'),
-        'method' => 'op_simple',
+        'method' => 'opSimple',
         'short' => t('<'),
         'values' => 1,
       ),
       '<=' => array(
         'title' => t('Is less than or equal to'),
-        'method' => 'op_simple',
+        'method' => 'opSimple',
         'short' => t('<='),
         'values' => 1,
       ),
       '=' => array(
         'title' => t('Is equal to'),
-        'method' => 'op_simple',
+        'method' => 'opSimple',
         'short' => t('='),
         'values' => 1,
       ),
       '!=' => array(
         'title' => t('Is not equal to'),
-        'method' => 'op_simple',
+        'method' => 'opSimple',
         'short' => t('!='),
         'values' => 1,
       ),
       '>=' => array(
         'title' => t('Is greater than or equal to'),
-        'method' => 'op_simple',
+        'method' => 'opSimple',
         'short' => t('>='),
         'values' => 1,
       ),
       '>' => array(
         'title' => t('Is greater than'),
-        'method' => 'op_simple',
+        'method' => 'opSimple',
         'short' => t('>'),
         'values' => 1,
       ),
       'between' => array(
         'title' => t('Is between'),
-        'method' => 'op_between',
+        'method' => 'opBetween',
         'short' => t('between'),
         'values' => 2,
       ),
       'not between' => array(
         'title' => t('Is not between'),
-        'method' => 'op_between',
+        'method' => 'opBetween',
         'short' => t('not between'),
         'values' => 2,
       ),
@@ -121,11 +118,11 @@ class GeofieldProximity extends Numeric {
     }
   }
 
-  public function op_between($options) {
+  protected function opBetween($options) {
     $this->query->add_where_expression($this->options['group'], geofield_haversine($options) . ' ' . strtoupper($this->operator) . ' ' . $this->value['distance'] . ' AND ' . $this->value['distance2']);
   }
 
-  public function op_simple($options) {
+  protected function opSimple($options) {
     $this->query->add_where_expression($this->options['group'], geofield_haversine($options) . ' ' . $this->operator . ' ' . $this->value['distance']);
   }
 
@@ -176,7 +173,7 @@ class GeofieldProximity extends Numeric {
     $proximityPlugin->options_validate($form, $form_state, $this);
   }
 
-  public function value_form(&$form, &$form_state) {
+  protected function valueForm(&$form, &$form_state) {
     $form['value'] = array(
       '#type' => 'geofield_proximity',
       '#title' => t('Proximity Search'),
@@ -201,8 +198,8 @@ class GeofieldProximity extends Numeric {
     }
   }
 
-  public function value_validate($form, &$form_state) {
-    parent::value_validate($form, $form_state);
+  protected function valueValidate($form, &$form_state) {
+    parent::valueValidate($form, $form_state);
     $proximityPlugin = geofield_proximity_load_plugin($form_state['values']['options']['source']);
     $proximityPlugin->value_validate($form, $form_state, $this);
   }

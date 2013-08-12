@@ -7,16 +7,16 @@
 
 namespace Drupal\geofield\Plugin\field\widget;
 
-use Drupal\Component\Annotation\Plugin;
+use Drupal\field\Annotation\FieldWidget;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Entity\Field\FieldInterface;
 use Drupal\field\Plugin\Type\Widget\WidgetBase;
 
 /**
- * Plugin implementation of the 'geofield_default' widget.
+ * Widget implementation of the 'geofield_default' widget.
  *
- * @Plugin(
+ * @FieldWidget(
  *   id = "geofield_widget_default",
- *   module = "geofield",
  *   label = @Translation("Geofield"),
  *   field_types = {
  *     "geofield"
@@ -26,14 +26,14 @@ use Drupal\field\Plugin\Type\Widget\WidgetBase;
 class GeofieldDefaultWidget extends WidgetBase {
 
   /**
-   * Implements \Drupal\field\Plugin\Type\Widget\WidgetInterface::formElement().
+   * {@inheritdoc}
    */
-  public function formElement(array $items, $delta, array $element, $langcode, array &$form, array &$form_state) {
-    $element['value'] = $element + array(
+  public function formElement(FieldInterface $items, $delta, array $element, $langcode, array &$form, array &$form_state) {
+    $element += array(
       '#type' => 'textarea',
-      '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
+      '#default_value' => $items[$delta]->value ?: NULL,
     );
-    return $element;
+    return array('value' => $element);
   }
 
 }

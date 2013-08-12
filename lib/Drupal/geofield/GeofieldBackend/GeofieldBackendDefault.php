@@ -1,27 +1,25 @@
 <?php
 
-namespace Drupal\geofield\Plugin\GeofieldBackend;
+namespace Drupal\geofield\GeofieldBackend;
 
 use Drupal;
 use geoPHP;
-use Drupal\Component\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
+use Drupal\Component\Annotation\Plugin;
+use Drupal\Component\Plugin\PluginBase;
 
 /**
  * Default backend for Geofield.
  *
  * @Plugin(
  *   id = "geofield_backend_default",
- *   admin_label = @Translation("Default Backend"),
- *   class = "GeofieldBackendDefault",
- *   module = "geofield"
+ *   admin_label = @Translation("Default Backend")
  * )
  */
 
-// @TODO: Provide base class.
 // @TODO: Document.
 
-class GeofieldBackendDefault {
+class GeofieldBackendDefault extends PluginBase {
   
   function schema() {
     return array(
