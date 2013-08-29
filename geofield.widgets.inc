@@ -30,12 +30,6 @@ define('GEOFIELD_INPUT_LAT_LON', 'lat/lon');
  */
 define('GEOFIELD_INPUT_BOUNDS', 'bounds');
 
-// If we have the Openlayers module installed, include their widget code.
-
-if (module_exists('openlayers')) {
-  require_once(drupal_get_path('module', 'geofield') . '/geofield.widgets.openlayers.inc');
-}
-
 /**
  * Implements hook_field_widget_info().
  */
