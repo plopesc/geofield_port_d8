@@ -5,13 +5,6 @@
  */
 
 require_once('geofield.elements.inc');
-/*require_once('geofield.widgets.inc');
-require_once('geofield.formatters.inc');
-require_once('geofield.openlayers.inc');
-require_once('geofield.feeds.inc');
-require_once('geofield.apachesolr.inc');
-require_once('geofield.schemaorg.inc');
-require_once('geofield.microdata.inc');*/
 
 /* *
  * Max length of geohashes (imposed by database column length).
