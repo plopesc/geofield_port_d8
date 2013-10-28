@@ -5,15 +5,14 @@
  * Definition of Drupal\geofield\Plugin\field\formatter\TextDefaultFormatter.
  */
 
-namespace Drupal\geofield\Plugin\field\formatter;
+namespace Drupal\geofield\Plugin\Field\FieldFormatter;
 
 use Drupal;
 use geoPHP;
-use Drupal\field\Annotation\FieldFormatter;
-use Drupal\Core\Annotation\Translation;
-use Drupal\field\Plugin\Type\Formatter\FormatterBase;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\Field\FieldInterface;
+use Drupal\Component\Utility\Url;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FormatterBase;
 
 
 /**
@@ -65,14 +64,7 @@ class GeofieldDefaultFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function prepareView(array $entities, $langcode, array $items) {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function viewElements(EntityInterface $entity, $langcode, FieldInterface $items) {
+  public function viewElements(FieldItemListInterface $items) {
     $elements = array();
     Drupal::service('geophp.geophp');
 

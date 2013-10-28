@@ -5,15 +5,11 @@
  * Contains \Drupal\geofield\field\field_type\GeofieldItem.
  */
 
-namespace Drupal\geofield\Plugin\field\field_type;
+namespace Drupal\geofield\Plugin\Field\FieldType;
 
-use Drupal;
 use geoPHP;
-use Drupal\Core\Entity\Annotation\FieldType;
-use Drupal\Core\Annotation\Translation;
-use Drupal\field\Plugin\Type\FieldType\ConfigFieldItemBase;
+use Drupal\Core\Field\ConfigFieldItemBase;
 use Drupal\field\FieldInterface;
-use Drupal\Core\Entity\Field\PrepareCacheInterface;
 use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
 
 /**
@@ -31,14 +27,10 @@ use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
  *   }
  * )
  */
-class GeofieldItem extends ConfigFieldItemBase implements PrepareCacheInterface {
+class GeofieldItem extends ConfigFieldItemBase {
 
   /**
-   * Definitions of the contained properties.
-   *
-   * @see GeofieldItem::getPropertyDefinitions()
-   *
-   * @var array
+   * {@inheritdoc}
    */
   static $propertyDefinitions;
 
@@ -49,7 +41,7 @@ class GeofieldItem extends ConfigFieldItemBase implements PrepareCacheInterface 
     $backendManager = \Drupal::service('plugin.manager.geofield_backend');
     $backendPlugin = NULL;
 
-    if (isset($field['settings']['backend']) && $backendManager->getDefinition($field['settings']['backend']) != NULL) {
+    if (isset($field->settings['backend']) && $backendManager->getDefinition($field->settings['backend']) != NULL) {
       $backendPlugin = $backendManager->createInstance($field['settings']['backend']);
     } 
 
@@ -122,7 +114,7 @@ class GeofieldItem extends ConfigFieldItemBase implements PrepareCacheInterface 
   }
 
   /**
-   * Implements ComplexDataInterface::getPropertyDefinitions().
+   * {@inheritDoc}
    */
   public function getPropertyDefinitions() {
     if (!isset(self::$propertyDefinitions)) {
@@ -186,7 +178,7 @@ class GeofieldItem extends ConfigFieldItemBase implements PrepareCacheInterface 
     $element['backend'] = array(
       '#type' => 'select',
       '#title' => t('Storage Backend'),
-      '#default_value' => $this->getInstance()->settings['backend'],
+      '#default_value' => $this->getFieldSetting('backend'),
       '#options' => $backend_options,
       '#description' => t("Select the Geospatial storage backend you would like to use to store geofield geometry data. If you don't know what this means, select 'Default'."),
     );
@@ -217,7 +209,7 @@ class GeofieldItem extends ConfigFieldItemBase implements PrepareCacheInterface 
    * Populates computed variables.
    */
   protected function populateComputedValues() {
-    Drupal::service('geophp.geophp');
+    \Drupal::service('geophp.geophp');
 
     $geom = geoPHP::load($this->value);
 

@@ -5,12 +5,10 @@
  * Contains \Drupal\geofield\Plugin\field\widget\GeofieldLatLonWidget.
  */
 
-namespace Drupal\geofield\Plugin\field\widget;
+namespace Drupal\geofield\Plugin\Field\FieldWidget;
 
-use Drupal\field\Annotation\FieldWidget;
-use Drupal\Core\Annotation\Translation;
-use Drupal\Core\Entity\Field\FieldInterface;
-use Drupal\field\Plugin\Type\Widget\WidgetBase;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\WidgetBase;
 
 /**
  * Plugin implementation of the 'geofield_latlon' widget.
@@ -45,7 +43,7 @@ class GeofieldLatLonWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldInterface $items, $delta, array $element, $langcode, array &$form, array &$form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, array &$form_state) {
 
     $latlon_value = array(
       'lat' => '',
