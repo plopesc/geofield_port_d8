@@ -1,8 +1,0 @@
-name: Geofield Map
-type: module
-description: 'Provides a basic mapping interface for Geofield.'
-version: VERSION
-core: 8.x
-dependencies:
-  - geofield
-package: Fields
