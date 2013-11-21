@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\geofield\Plugin\field\widget\GeofieldLatLonWidget.
+ * Contains \Drupal\geofield\Plugin\Field\FieldWidget\GeofieldLatLonWidget.
  */
 
 namespace Drupal\geofield\Plugin\Field\FieldWidget;

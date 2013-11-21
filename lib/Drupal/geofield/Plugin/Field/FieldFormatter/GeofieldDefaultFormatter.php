@@ -2,17 +2,15 @@
 
 /**
  * @file
- * Definition of Drupal\geofield\Plugin\field\formatter\TextDefaultFormatter.
+ * Definition of Drupal\geofield\Plugin\Field\FieldFormatter\TextDefaultFormatter.
  */
 
 namespace Drupal\geofield\Plugin\Field\FieldFormatter;
 
 use Drupal;
 use geoPHP;
-use Drupal\Component\Utility\Url;
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Field\FieldItemListInterface;
 
 
 /**

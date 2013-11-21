@@ -2,15 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\geofield\Plugin\field\widget\GeofieldDefaultWidget.
+ * Contains \Drupal\geofield\Plugin\Field\FieldWidget\GeofieldDefaultWidget.
  */
 
-namespace Drupal\geofield\Plugin\field\widget;
+namespace Drupal\geofield\Plugin\Field\FieldWidget;
 
-use Drupal\field\Annotation\FieldWidget;
-use Drupal\Core\Annotation\Translation;
-use Drupal\Core\Entity\Field\FieldInterface;
-use Drupal\field\Plugin\Type\Widget\WidgetBase;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\WidgetBase;
 
 /**
  * Widget implementation of the 'geofield_default' widget.
@@ -20,7 +18,8 @@ use Drupal\field\Plugin\Type\Widget\WidgetBase;
  *   label = @Translation("Geofield"),
  *   field_types = {
  *     "geofield"
- *   }
+ *   },
+ *   settings = {}
  * )
  */
 class GeofieldDefaultWidget extends WidgetBase {
@@ -35,5 +34,4 @@ class GeofieldDefaultWidget extends WidgetBase {
     );
     return array('value' => $element);
   }
-
 }

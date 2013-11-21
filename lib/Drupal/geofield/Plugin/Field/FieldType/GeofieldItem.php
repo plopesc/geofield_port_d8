@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\geofield\field\field_type\GeofieldItem.
+ * Contains \Drupal\geofield\Field\FieldType\GeofieldItem.
  */
 
 namespace Drupal\geofield\Plugin\Field\FieldType;
