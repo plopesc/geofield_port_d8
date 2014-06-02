@@ -18,16 +18,14 @@ use Drupal\Core\Field\WidgetBase;
  *   label = @Translation("Geofield"),
  *   field_types = {
  *     "geofield"
- *   },
- *   settings = {}
+ *   }
  * )
  */
 class GeofieldDefaultWidget extends WidgetBase {
-
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldInterface $items, $delta, array $element, $langcode, array &$form, array &$form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, array &$form_state) {
     $element += array(
       '#type' => 'textarea',
       '#default_value' => $items[$delta]->value ?: NULL,

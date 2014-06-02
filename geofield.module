@@ -43,7 +43,8 @@ define('GEOFIELD_NAUTICAL_MILES', 3444);
 
 /**
  * Implements hook_field_validate().
- * @TODO: At some point, this hook will probably turn into a method on the field controller class.
+ * @TODO: No longer called, need a Constraint instead. Leaving code for example implementation, check
+ *   link module for how to create constraint.
  */
 function geofield_field_validate(EntityInterface $entity = NULL, $field, $instance, $langcode, $items, &$errors) {
   Drupal::service('geophp');
@@ -75,31 +76,4 @@ function geofield_field_validate(EntityInterface $entity = NULL, $field, $instan
   }
 
   return $errors;
-}
-
-/**
- * Implements hook_field_presave().
- *  - There's a decent chance this hook will go away in favor of a method on the field item class.
- */
-function geofield_field_presave($entity, $field, $instance, $langcode, &$items) {
-  $field_info = $instance->getField();
-  $geofield_name = $field_info->id;
-
-  // @TODO: actually check field settings ($field['settings']['backend'])
-  $backendPlugin = \Drupal::service('plugin.manager.geofield_backend')->createInstance('geofield_backend_default');
-
-  $field = $entity->get($geofield_name);
-
-  foreach ($items as $delta => $item) {
-    // @TODO: There must be a better way to do this. :-(
-    $items[$delta]['value'] = $backendPlugin->save($field->offsetGet($delta)->get('value')->getValue());
-    $items[$delta]['geo_type'] = $field->offsetGet($delta)->get('geo_type')->getValue();
-    $items[$delta]['lat'] = $field->offsetGet($delta)->get('lat')->getValue();
-    $items[$delta]['lon'] = $field->offsetGet($delta)->get('lon')->getValue();
-    $items[$delta]['left'] = $field->offsetGet($delta)->get('left')->getValue();
-    $items[$delta]['top'] = $field->offsetGet($delta)->get('top')->getValue();
-    $items[$delta]['right'] = $field->offsetGet($delta)->get('right')->getValue();
-    $items[$delta]['bottom'] = $field->offsetGet($delta)->get('bottom')->getValue();
-    $items[$delta]['geohash'] = $field->offsetGet($delta)->get('geohash')->getValue();
-  }
 }

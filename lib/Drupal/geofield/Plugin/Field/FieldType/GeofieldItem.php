@@ -8,12 +8,15 @@
 namespace Drupal\geofield\Plugin\Field\FieldType;
 
 use geoPHP;
-use Drupal\Core\Field\ConfigFieldItemBase;
-use Drupal\field\FieldInterface;
 use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
+use Drupal\Core\Field\FieldItemBase;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\TypedData\DataDefinition;
 
 /**
  * Plugin implementation of the 'geofield' field type.
+ *
+ * @TODO: Add constraint, since hook_field_validate is no longer a thing. See link module for example
  *
  * @FieldType(
  *   id = "geofield",
@@ -27,17 +30,11 @@ use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
  *   }
  * )
  */
-class GeofieldItem extends ConfigFieldItemBase {
-
+class GeofieldItem extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  static $propertyDefinitions;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function schema(FieldInterface $field) {
+  public static function schema(FieldStorageDefinitionInterface $field) {
     $backendManager = \Drupal::service('plugin.manager.geofield_backend');
     $backendPlugin = NULL;
 
@@ -116,46 +113,35 @@ class GeofieldItem extends ConfigFieldItemBase {
   /**
    * {@inheritDoc}
    */
-  public function getPropertyDefinitions() {
-    if (!isset(self::$propertyDefinitions)) {
-      self::$propertyDefinitions['value'] = array(
-        'type' => 'string',
-        'label' => t('Geometry'),
-      );
-      self::$propertyDefinitions['geo_type'] = array(
-        'type' => 'string',
-        'label' => t('Geometry Type'),
-      );
-      self::$propertyDefinitions['lat'] = array(
-        'type' => 'float',
-        'label' => t('Latitude'),
-      );
-      self::$propertyDefinitions['lon'] = array(
-        'type' => 'float',
-        'label' => t('Longitude'),
-      );
-      self::$propertyDefinitions['left'] = array(
-        'type' => 'float',
-        'label' => t('Left Bounding'),
-      );
-      self::$propertyDefinitions['top'] = array(
-        'type' => 'float',
-        'label' => t('Top Bounding'),
-      );
-      self::$propertyDefinitions['right'] = array(
-        'type' => 'float',
-        'label' => t('Right Bounding'),
-      );
-      self::$propertyDefinitions['bottom'] = array(
-        'type' => 'float',
-        'label' => t('Bottom Bounding'),
-      );
-      self::$propertyDefinitions['geohash'] = array(
-        'type' => 'string',
-        'label' => t('Geohash'),
-      );
-    }
-    return self::$propertyDefinitions;
+  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+    $properties['value'] = DataDefinition::create('string')
+      ->setLabel(t('Geometry'));
+
+    $properties['geo_type'] = DataDefinition::create('string')
+      ->setLabel(t('Geometry Type'));
+
+    $properties['lat'] = DataDefinition::create('float')
+      ->setLabel(t('Centeroid Latitude'));
+
+    $properties['lon'] = DataDefinition::create('float')
+      ->setLabel(t('Centeroid Longitude'));
+
+    $properties['left'] = DataDefinition::create('float')
+      ->setLabel(t('Left Bounding'));
+
+    $properties['top'] = DataDefinition::create('float')
+      ->setLabel(t('Top Bounding'));
+
+    $properties['right'] = DataDefinition::create('float')
+      ->setLabel(t('Right Bounding'));
+
+    $properties['bottom'] = DataDefinition::create('float')
+      ->setLabel(t('Bottom Bounding'));
+
+    $properties['geohash'] = DataDefinition::create('float')
+      ->setLabel(t('Geohash'));
+
+    return $properties;
   }
 
   /**
@@ -178,7 +164,7 @@ class GeofieldItem extends ConfigFieldItemBase {
     $element['backend'] = array(
       '#type' => 'select',
       '#title' => t('Storage Backend'),
-      '#default_value' => $this->getFieldSetting('backend'),
+      '#default_value' => $this->getSetting('backend'),
       '#options' => $backend_options,
       '#description' => t("Select the Geospatial storage backend you would like to use to store geofield geometry data. If you don't know what this means, select 'Default'."),
     );
