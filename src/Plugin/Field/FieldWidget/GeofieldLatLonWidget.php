@@ -70,7 +70,7 @@ class GeofieldLatLonWidget extends WidgetBase {
    */
   public function massageFormValues(array $values, array $form, array &$form_state) {
     foreach ($values as $delta => $value) {
-      if (!empty($value['value']['lat']) && !empty($value['value']['lon'])) {
+      if (!empty($value['value']['lat']) && !empty($value['value']['lon']) && is_numeric($values['value']['lat']) && is_numeric($values['value']['lon'])) {
         $values[$delta]['value'] = 'POINT(' . $value['value']['lon'] . ' ' . $value['value']['lat'] . ')';
       }
       else {
