@@ -52,7 +52,7 @@ class GeoConstraint extends Constraint implements ConstraintValidatorInterface {
       \Drupal::service('geophp.geophp');
 
       try {
-        $geoData = geoPHP::load($value->value);
+        $geoData = geoPHP::load($value);
       }
       catch (Exception $e) {
         $valid_geometry = FALSE;

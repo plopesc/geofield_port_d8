@@ -25,8 +25,7 @@ use Drupal\Core\TypedData\DataDefinition;
  *   default_formatter = "geofield_formatter_default",
  *   instance_settings = {
  *     "backend" = "geofield_backend_default"
- *   },
- *   constraints = {"GeoType" = {}}
+ *   }
  * )
  */
 class GeofieldItem extends FieldItemBase {
@@ -114,7 +113,8 @@ class GeofieldItem extends FieldItemBase {
    */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties['value'] = DataDefinition::create('string')
-      ->setLabel(t('Geometry'));
+      ->setLabel(t('Geometry'))
+      ->addConstraint('GeoType', []);
 
     $properties['geo_type'] = DataDefinition::create('string')
       ->setLabel(t('Geometry Type'));
@@ -137,7 +137,7 @@ class GeofieldItem extends FieldItemBase {
     $properties['bottom'] = DataDefinition::create('float')
       ->setLabel(t('Bottom Bounding'));
 
-    $properties['geohash'] = DataDefinition::create('float')
+    $properties['geohash'] = DataDefinition::create('string')
       ->setLabel(t('Geohash'));
 
     return $properties;
