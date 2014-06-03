@@ -16,8 +16,6 @@ use Drupal\Core\TypedData\DataDefinition;
 /**
  * Plugin implementation of the 'geofield' field type.
  *
- * @TODO: Add constraint, since hook_field_validate is no longer a thing. See link module for example
- *
  * @FieldType(
  *   id = "geofield",
  *   module = "geofield",
@@ -27,7 +25,8 @@ use Drupal\Core\TypedData\DataDefinition;
  *   default_formatter = "geofield_formatter_default",
  *   instance_settings = {
  *     "backend" = "geofield_backend_default"
- *   }
+ *   },
+ *   constraints = {"GeoType" = {}}
  * )
  */
 class GeofieldItem extends FieldItemBase {
