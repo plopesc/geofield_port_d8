@@ -21,9 +21,6 @@ use Drupal\Core\Field\FieldItemListInterface;
  *   label = @Translation("Raw Output"),
  *   field_types = {
  *     "geofield"
- *   },
- *   quickedit = {
- *     "editor" = "direct"
  *   }
  * )
  */
