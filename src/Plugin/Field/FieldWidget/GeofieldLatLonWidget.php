@@ -18,13 +18,20 @@ use Drupal\Core\Field\WidgetBase;
  *   label = @Translation("Latitude/Longitude"),
  *   field_types = {
  *     "geofield"
- *   },
- *   settings = {
- *     "html5_geolocation" = false
  *   }
  * )
  */
 class GeofieldLatLonWidget extends WidgetBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultSettings() {
+    return array(
+      'html5_geolocation' => FALSE,
+    ) + parent::defaultSettings();
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -38,6 +45,15 @@ class GeofieldLatLonWidget extends WidgetBase {
     );
 
     return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary() {
+    return array(
+      t('HTML5 Geolocation button is @state', array('@state' => $this->getSetting('html5_geolocation') ? t('enabled') : t('disabled')))
+    );
   }
 
   /**
