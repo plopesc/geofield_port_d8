@@ -13,7 +13,7 @@ use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\ExecutionContextInterface;
 
 /**
- * Validation constraint for links receiving data allowed by its settings.
+ * Validation constraint for geospatial values.
  *
  * @Plugin(
  *   id = "GeoType",
@@ -22,7 +22,7 @@ use Symfony\Component\Validator\ExecutionContextInterface;
  */
 class GeoConstraint extends Constraint implements ConstraintValidatorInterface {
 
-  public $message = 'The geospatial content is invalid.';
+  public $message = '"@value" is not a valid geospatial content.';
 
   /**
    * @var \Symfony\Component\Validator\ExecutionContextInterface
@@ -49,19 +49,19 @@ class GeoConstraint extends Constraint implements ConstraintValidatorInterface {
   public function validate($value, Constraint $constraint) {
     if (isset($value)) {
       $valid_geometry = TRUE;
-      \Drupal::service('geophp.geophp');
 
       try {
-        $geoData = geoPHP::load($value);
+        if (!geoPHP::load($value, 'wkt')) {
+          $valid_geometry = FALSE;
+        }
       }
-      catch (Exception $e) {
+      catch (\Exception $e) {
         $valid_geometry = FALSE;
       }
 
       if (!$valid_geometry) {
-        $this->context->addViolation($this->message, array());
+        $this->context->addViolation($this->message, array('@value' => $value));
       }
     }
   }
 }
-

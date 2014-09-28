@@ -22,13 +22,20 @@ use Drupal\Core\TypedData\DataDefinition;
  *   label = @Translation("Geofield"),
  *   description = @Translation("This field stores geospatial information."),
  *   default_widget = "geofield_latlon",
- *   default_formatter = "geofield_formatter_default",
- *   instance_settings = {
- *     "backend" = "geofield_backend_default"
- *   }
+ *   default_formatter = "geofield_formatter_default"
  * )
  */
 class GeofieldItem extends FieldItemBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultInstanceSettings() {
+    return array(
+      'backend' => 'geofield_backend_default',
+    ) + parent::defaultInstanceSettings();
+  }
+
   /**
    * {@inheritdoc}
    */
