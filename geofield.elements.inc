@@ -98,13 +98,14 @@ function geofield_latlon_element_validate($element, &$form_state) {
 
   $allFilled = TRUE;
   $anyFilled = FALSE;
+  $error_label = isset($element['#error_label']) ? $element['#error_label'] : $element['#title'];
   foreach ($components as $key => $component) {
     if (!empty($element[$key]['#value'])) {
       if (!is_numeric($element[$key]['#value'])) {
-        form_error($element[$key], $form_state, t('@title: @component_title is not numeric.', array('@title' => $element['#title'], '@component_title' => $component['title'])));
+        \Drupal::formBuilder()->setError($element[$key], $form_state, t('@title: @component_title is not numeric.', array('@title' => $error_label, '@component_title' => $component['title'])));
       }
       elseif (abs($element[$key]['#value']) > $component['range']) {
-        form_error($element[$key], $form_state, t('@title: @component_title is out of bounds.', array('@title' => $element['#title'], '@component_title' => $component['title'])));
+        \Drupal::formBuilder()->setError($element[$key], $form_state, t('@title: @component_title is out of bounds.', array('@title' => $error_label, '@component_title' => $component['title'])));
       }
     }
     if ($element[$key]['#value'] == '') {
@@ -117,7 +118,7 @@ function geofield_latlon_element_validate($element, &$form_state) {
   if ($anyFilled && !$allFilled) {
     foreach ($components as $key => $component) {
       if ($element[$key]['#value'] == '') {
-        form_error($element[$key], $form_state, t('@title: @component_title must be filled too.', array('@title' => $element['#title'], '@component_title' => $component['title'])));
+        \Drupal::formBuilder()->setError($element[$key], $form_state, t('@title: @component_title must be filled too.', array('@title' => $error_label, '@component_title' => $component['title'])));
       }
     }
   }

@@ -76,6 +76,7 @@ class GeofieldLatLonWidget extends WidgetBase {
       '#type' => 'geofield_latlon',
       '#default_value' => $latlon_value,
       '#geolocation' => $this->getSetting('html5_geolocation'),
+      '#error_label' => !empty($element['#title']) ? $element['#title'] : $this->fieldDefinition->getLabel(),
     );
 
     return array('value' => $element);
