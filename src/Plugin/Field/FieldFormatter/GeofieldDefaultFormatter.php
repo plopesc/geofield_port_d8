@@ -2,19 +2,18 @@
 
 /**
  * @file
- * Definition of Drupal\geofield\Plugin\Field\FieldFormatter\TextDefaultFormatter.
+ * Contains \Drupal\geofield\Plugin\Field\FieldFormatter\GeofieldDefaultFormatter.
  */
 
 namespace Drupal\geofield\Plugin\Field\FieldFormatter;
 
-use Drupal;
 use geoPHP;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\FieldItemListInterface;
-
+use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Plugin implementation of the 'geofield_default' formatter.
+ * Plugin implementation of the 'geofield_formatter_default' formatter.
  *
  * @FieldFormatter(
  *   id = "geofield_formatter_default",
@@ -38,28 +37,28 @@ class GeofieldDefaultFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, array &$form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state) {
     $elements = parent::settingsForm($form, $form_state);
 
-    Drupal::service('geophp.geophp');
+    \Drupal::service('geophp.geophp');
     $options = geoPHP::getAdapterMap();
     unset($options['google_geocode']);
 
-    $element['output_format'] = array(
+    $elements['output_format'] = array(
       '#title' => t('Output Format'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('output_format'),
       '#options' => $options,
       '#required' => TRUE,
     );
-    return $element;
+    return $elements;
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    Drupal::service('geophp.geophp');
+    \Drupal::service('geophp.geophp');
     $formatOptions = geoPHP::getAdapterMap();
     $summary = array();
     $summary[] = t('Geospatial output format: @format', array('@format' => $formatOptions[$this->getSetting('output_format')]));
@@ -71,7 +70,7 @@ class GeofieldDefaultFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items) {
     $elements = array();
-    Drupal::service('geophp.geophp');
+    \Drupal::service('geophp.geophp');
 
     foreach ($items as $delta => $item) {
       $geom = geoPHP::load($item->value);

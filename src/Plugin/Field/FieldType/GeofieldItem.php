@@ -7,6 +7,7 @@
 
 namespace Drupal\geofield\Plugin\Field\FieldType;
 
+use Drupal\Core\Form\FormStateInterface;
 use geoPHP;
 use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
 use Drupal\Core\Field\FieldItemBase;
@@ -153,7 +154,7 @@ class GeofieldItem extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public function instanceSettingsForm(array $form, array &$form_state) {
+  public function instanceSettingsForm(array $form, FormStateInterface $form_state) {
     // @TODO: Backend plugins need to define requirement/settings methods,
     //   allow them to inject data here.
     $element = array();
