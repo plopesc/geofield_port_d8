@@ -6,6 +6,48 @@
 
 require_once('geofield.elements.inc');
 
+/**
+ * Point feature constant.
+ *
+ * @var string
+ */
+define('GEOFIELD_TYPE_POINT', 'POINT');
+
+/**
+ * Multipoint feature constant.
+ *
+ * @var string
+ */
+define('GEOFIELD_TYPE_MULTIPOINT', 'MULTIPOINT');
+
+/**
+ * Linestring feature constant.
+ *
+ * @var string
+ */
+define('GEOFIELD_TYPE_LINESTRING', 'LINESTRING');
+
+/**
+ * Multilinestring feature constant.
+ *
+ * @var string
+ */
+define('GEOFIELD_TYPE_MULTILINESTRING' , 'MULTILINESTRING');
+
+/**
+ * Polygon feature constant.
+ *
+ * @var string
+ */
+define('GEOFIELD_TYPE_POLYGON', 'POLYGON');
+
+/**
+ * Multipolygon feature constant.
+ *
+ * @var string
+ */
+define('GEOFIELD_TYPE_MULTIPOLYGON', 'MULTIPOLYGON');
+
 /* *
  * Max length of geohashes (imposed by database column length).
  */
