@@ -4,7 +4,7 @@
  * @TODO: Provide function/method to determine version.
  */
 
-require_once('geofield.elements.inc');
+use Drupal\Core\Template\Attribute;
 
 /**
  * Point feature constant.
@@ -82,3 +82,49 @@ define('GEOFIELD_FEET', 20925525);
  * Diameter of the Earth in nautical miles.
  */
 define('GEOFIELD_NAUTICAL_MILES', 3444);
+
+/**
+ * Implements hook_theme().
+ */
+function geofield_theme() {
+  return array(
+    'geofield_proximity' => array(
+      'render element' => 'element',
+    ),
+  );
+}
+
+/**
+ * Returns options for radius of the Earth.
+ */
+function geofield_radius_options() {
+  return array(
+    GEOFIELD_KILOMETERS => t('Kilometers'),
+    GEOFIELD_METERS => t('Meters'),
+    GEOFIELD_MILES => t('Miles'),
+    GEOFIELD_YARDS => t('Yards'),
+    GEOFIELD_FEET => t('Feet'),
+    GEOFIELD_NAUTICAL_MILES => t('Nautical Miles'),
+  );
+}
+
+/**
+ * Theme wrapper for form item
+ */
+function theme_geofield_proximity($vars) {
+  $element = $vars['element'];
+
+  $attributes = !empty($element['#wrapper_attributes']) ? $element['#wrapper_attributes'] : array('class' => array());
+  $attributes['class'][] = 'geofield-proximity-field-wrapper';
+  $attributes['class'][] = 'clearfix';
+
+  $wrapper_attributes = array();
+  $wrapper_attributes['class'][] = 'clearfix';
+
+  if (isset($element['#children']))
+    $element['#children'] = '<div id="' . $element['#id'] . '" ' . new Attribute($wrapper_attributes) . '>' . $element['#children'] . '</div>';
+
+  $output = '<div ' . new Attribute($attributes) . '>' . render($vars) . '</div>';
+
+  return $output;
+}
