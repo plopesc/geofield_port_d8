@@ -61,7 +61,6 @@ class GeofieldLatLonWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-
     $latlon_value = array(
       'lat' => '',
       'lon' => '',
@@ -98,4 +97,5 @@ class GeofieldLatLonWidget extends WidgetBase {
 
     return $values;
   }
+
 }

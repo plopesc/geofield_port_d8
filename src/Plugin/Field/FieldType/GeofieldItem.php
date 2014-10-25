@@ -9,7 +9,6 @@ namespace Drupal\geofield\Plugin\Field\FieldType;
 
 use Drupal\Core\Form\FormStateInterface;
 use geoPHP;
-use Drupal\geofield\Plugin\Type\GeofieldBackendPluginManager;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
@@ -19,7 +18,6 @@ use Drupal\Core\TypedData\DataDefinition;
  *
  * @FieldType(
  *   id = "geofield",
- *   module = "geofield",
  *   label = @Translation("Geofield"),
  *   description = @Translation("This field stores geospatial information."),
  *   default_widget = "geofield_latlon",
@@ -128,10 +126,10 @@ class GeofieldItem extends FieldItemBase {
       ->setLabel(t('Geometry Type'));
 
     $properties['lat'] = DataDefinition::create('float')
-      ->setLabel(t('Centeroid Latitude'));
+      ->setLabel(t('Centroid Latitude'));
 
     $properties['lon'] = DataDefinition::create('float')
-      ->setLabel(t('Centeroid Longitude'));
+      ->setLabel(t('Centroid Longitude'));
 
     $properties['left'] = DataDefinition::create('float')
       ->setLabel(t('Left Bounding'));
@@ -162,7 +160,7 @@ class GeofieldItem extends FieldItemBase {
     $backendManager = \Drupal::service('plugin.manager.geofield_backend');
 
     $backends = $backendManager->getDefinitions();
-    $backendOptions = array();
+    $backend_options = array();
 
     foreach ($backends as $id => $backend) {
       $backend_options[$id] = $backend['admin_label'];
@@ -203,7 +201,6 @@ class GeofieldItem extends FieldItemBase {
    */
   protected function populateComputedValues() {
     \Drupal::service('geophp.geophp');
-
     $geom = geoPHP::load($this->value);
 
     if (!empty($geom)) {
