@@ -7,6 +7,7 @@
 
 namespace Drupal\geofield\Plugin\Field\FieldType;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use geoPHP;
 use Drupal\Core\Field\FieldItemBase;
@@ -43,7 +44,7 @@ class GeofieldItem extends FieldItemBase {
     $backendPlugin = NULL;
 
     if (isset($field->settings['backend']) && $backendManager->getDefinition($field->settings['backend']) != NULL) {
-      $backendPlugin = $backendManager->createInstance($field['settings']['backend']);
+      $backendPlugin = $backendManager->createInstance($field->getSetting('backend'));
     } 
 
     if ($backendPlugin === NULL) {
@@ -224,4 +225,16 @@ class GeofieldItem extends FieldItemBase {
   public function prepareCache() {
     
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function generateSampleValue(FieldDefinitionInterface $field_definition) {
+    $value = array(
+      'value' => \Drupal::service('geofield.wkt_generator')->WktGenerateGeometry(),
+    );
+
+    return $value;
+  }
+
 }
