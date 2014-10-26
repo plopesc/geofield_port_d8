@@ -2,28 +2,29 @@
 
 /**
  * @file
- * Contains \Drupal\text\Tests\TextSummaryItemTest.
+ * Contains \Drupal\geofield\Tests\GeofieldItemTest.
  */
 
-namespace Drupal\text\Tests;
+namespace Drupal\geofield\Tests;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\field\Tests\FieldUnitTestBase;
+use geoPHP;
 
 /**
- * Tests using entity fields of the text summary field type.
+ * Tests using entity fields of the geofield field type.
  *
- * @group text
+ * @group geofield
  */
-class TextWithSummaryItemTest extends FieldUnitTestBase {
+class GeofieldItemTest extends FieldUnitTestBase {
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = array('filter');
+  public static $modules = array('geophp', 'geofield');
 
   /**
    * Field storage entity.
@@ -44,13 +45,6 @@ class TextWithSummaryItemTest extends FieldUnitTestBase {
     parent::setUp();
 
     $this->installEntitySchema('entity_test_rev');
-
-    // Create the necessary formats.
-    $this->installConfig(array('filter'));
-    entity_create('filter_format', array(
-      'format' => 'no_filters',
-      'filters' => array(),
-    ))->save();
   }
 
   /**
@@ -60,38 +54,47 @@ class TextWithSummaryItemTest extends FieldUnitTestBase {
     $entity_type = 'entity_test';
     $this->createField($entity_type);
 
-    // Create an entity with a summary and no text format.
+    // Create an entity with a random geofield field.
     $entity = entity_create($entity_type);
-    $entity->summary_field->value = $value = $this->randomMachineName();
-    $entity->summary_field->summary = $summary = $this->randomMachineName();
-    $entity->summary_field->format = NULL;
+    $entity->geofield_field->value = $value = \Drupal::service('geofield.wkt_generator')->WktGenerateGeometry();
     $entity->name->value = $this->randomMachineName();
     $entity->save();
 
     $entity = entity_load($entity_type, $entity->id());
-    $this->assertTrue($entity->summary_field instanceof FieldItemListInterface, 'Field implements interface.');
-    $this->assertTrue($entity->summary_field[0] instanceof FieldItemInterface, 'Field item implements interface.');
-    $this->assertEqual($entity->summary_field->value, $value);
-    $this->assertEqual($entity->summary_field->summary, $summary);
-    $this->assertNull($entity->summary_field->format);
-    // Even if no format is given, if text processing is enabled, the default
-    // format is used.
-    $this->assertEqual($entity->summary_field->processed, "<p>$value</p>\n");
-    $this->assertEqual($entity->summary_field->summary_processed, "<p>$summary</p>\n");
+    $this->assertTrue($entity->geofield_field instanceof FieldItemListInterface, 'Field implements interface.');
+    $this->assertTrue($entity->geofield_field[0] instanceof FieldItemInterface, 'Field item implements interface.');
+    $this->assertEqual($entity->geofield_field->value, $value);
 
-    // Change the format, this should update the processed properties.
-    $entity->summary_field->format = 'no_filters';
-    $this->assertEqual($entity->summary_field->processed, $value);
-    $this->assertEqual($entity->summary_field->summary_processed, $summary);
+    // Test computed values.
+    \Drupal::service('geophp.geophp');
+    $geom = geoPHP::load($value);
+    if (!empty($geom)) {
+      $centroid = $geom->getCentroid();
+      $bounding = $geom->getBBox();
+      $computed = array();
+
+      $computed['geo_type'] = $geom->geometryType();
+      $computed['lon'] = $centroid->getX();
+      $computed['lat'] = $centroid->getY();
+      $computed['left'] = $bounding['minx'];
+      $computed['top'] = $bounding['maxy'];
+      $computed['right'] = $bounding['maxx'];
+      $computed['bottom'] = $bounding['miny'];
+      $computed['geohash'] = $geom->out('geohash');
+
+      foreach ($computed as $index => $computed_value) {
+        $this->assertEqual($entity->geofield_field->{$index}, $computed_value);
+      }
+    }
 
     // Test the generateSampleValue() method.
     $entity = entity_create($entity_type);
-    $entity->summary_field->generateSampleItems();
+    $entity->geofield_field->generateSampleItems();
     $this->entityValidateAndSave($entity);
   }
 
   /**
-   * Creates a text_with_summary field storage and field.
+   * Creates a geofield field storage and field.
    *
    * @param string $entity_type
    *   Entity type for which the field should be created.
@@ -99,11 +102,11 @@ class TextWithSummaryItemTest extends FieldUnitTestBase {
   protected function createField($entity_type) {
     // Create a field .
     $this->fieldStorage = entity_create('field_storage_config', array(
-      'field_name' => 'summary_field',
+      'field_name' => 'geofield_field',
       'entity_type' => $entity_type,
-      'type' => 'text_with_summary',
+      'type' => 'geofield',
       'settings' => array(
-        'max_length' => 10,
+        'backend' => 'geofield_backend_default',
       )
     ));
     $this->fieldStorage->save();

@@ -8,7 +8,7 @@
 namespace Drupal\geofield;
 
 /**
- * Helper class that generates WKT format geometries.q
+ * Helper class that generates WKT format geometries.
  */
 class WktGenerator implements WktGeneratorInterface {
 
@@ -104,13 +104,12 @@ class WktGenerator implements WktGeneratorInterface {
    * Generates a point coordinates.
    *
    * @param array $point
-   *   A Lon Lat array. By default create a random pair.
+   *   A Lon Lat array.
    *
    * @return string
    *   The structured point coordinates.
    */
-  protected function generatePoint($point = NULL) {
-    $point = $point ? $point : $this->randomPoint();
+  protected function buildPoint($point) {
     return implode(' ', $point);
   }
 
@@ -118,7 +117,15 @@ class WktGenerator implements WktGeneratorInterface {
    * {@inheritdoc}
    */
   public function WktGeneratePoint($point = NULL) {
-    return $this->buildWkt(GEOFIELD_TYPE_POINT, $this->generatePoint($point));
+    $point = $point ? $point : $this->randomPoint();
+    return $this->WktBuildPoint($point);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function WktBuildPoint($point) {
+    return $this->buildWkt(GEOFIELD_TYPE_POINT, $this->buildPoint($point));
   }
 
   /**
@@ -130,12 +137,12 @@ class WktGenerator implements WktGeneratorInterface {
   protected function generateMultipoint() {
     $num = $this->DdGenerate(1, 5, TRUE);
     $start = $this->randomPoint();
-    $points[] = $this->generatePoint($start);
+    $points[] = $this->buildPoint($start);
     for ($i = 0; $i < $num; $i += 1) {
       $diff = $this->randomPoint();
       $start[0] += $diff[0] / 100;
       $start[1] += $diff[1] / 100;
-      $points[] = $this->generatePoint($start);
+      $points[] = $this->buildPoint($start);
     }
     return $this->buildMultiCoordinates($points);
   }
@@ -148,35 +155,59 @@ class WktGenerator implements WktGeneratorInterface {
   }
 
   /**
-   * Generates a linestring coordinates.
+   * Generates a linestring components array.
    *
    * @param array $start
    *   The starting point. If not provided, will be randomly generated.
    * @param int $segments
    *   Number of segments. If not provided, will be randomly generated.
    *
-   * @return string
-   *   The structured linestring coordinates.
+   * @return array
+   *   The linestring components coordinates.
    */
   protected function generateLinestring($start = NULL, $segments = NULL) {
     $start = $start ? $start : $this->randomPoint();
-    $segments = $segments ? $segments : $this->DdGenerate(1, 5, TRUE);
-    $points[] = $start[0] . ' ' . $start[1];
+    $segments = $segments ? $segments : $this->DdGenerate(2, 5, TRUE);
+    $points[] = array($start[0], $start[1]);
     // Points are at most 1km away from each other.
     for ($i = 1; $i < $segments; $i += 1) {
       $diff = $this->randomPoint();
       $start[0] += $diff[0] / 100;
       $start[1] += $diff[1] / 100;
-      $points[] = $start[0] . ' ' . $start[1];
+      $points[] = array($start[0], $start[1]);
     }
-    return implode(", ", $points);
+    return $points;
   }
 
   /**
    * {@inheritdoc}
    */
   public function WktGenerateLinestring($start = NULL, $segments = NULL) {
-    return $this->buildWkt(GEOFIELD_TYPE_LINESTRING, $this->generateLinestring($start, $segments));
+    return $this->WktBuildLinestring($this->generateLinestring($start, $segments));
+  }
+
+  /**
+   * Builds a Linestring format string from an array of point components.
+   *
+   * @param array $points
+   *   Array containing the linestring component's coordinates.
+   *
+   * @return string
+   *   The structured linestring coordinates.
+   */
+  protected function buildLinestring($points) {
+    $components = array();
+    foreach ($points as $point) {
+      $components[] = $this->buildPoint($point);
+    }
+    return implode(", ", $components);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function WktBuildLinestring($points) {
+    return $this->buildWkt(GEOFIELD_TYPE_LINESTRING, $this->buildLinestring($points));
   }
 
   /**
@@ -188,12 +219,12 @@ class WktGenerator implements WktGeneratorInterface {
   protected function generateMultilinestring() {
     $start = $this->randomPoint();
     $num = $this->DdGenerate(1, 3, TRUE);
-    $lines[] = $this->generateLinestring($start);
+    $lines[] = $this->buildLinestring($this->generateLinestring($start));
     for ($i = 0; $i < $num; $i += 1) {
       $diff = $this->randomPoint();
       $start[0] += $diff[0] / 100;
       $start[1] += $diff[1] / 100;
-      $lines[] = $this->generateLinestring($start);
+      $lines[] = $this->buildLinestring($this->generateLinestring($start));
     }
     return $this->buildMultiCoordinates($lines);
   }
@@ -206,29 +237,54 @@ class WktGenerator implements WktGeneratorInterface {
   }
 
   /**
-   * Generates a polygon coordinates.
+   * Generates a polygon components array.
    *
    * @param array $start
    *   The starting point. If not provided, will be randomly generated.
    * @param int $segments
    *   Number of segments. If not provided, will be randomly generated.
    *
-   * @return string
-   *   The structured polygon coordinates.
+   * @return array
+   *   The polygon components coordinates.
    */
   protected function generatePolygon($start = NULL, $segments = NULL) {
     $start = $start ? $start : $this->randomPoint();
     $segments = $segments ? $segments : $this->DdGenerate(2, 4, TRUE);
     $poly = $this->generateLinestring($start, $segments);
     // Close the polygon.
-    return '(' . $poly . ', ' . $start[0] . ' ' . $start[1] . ')';
+    $poly[] = $start;
+    return $poly;
   }
 
   /**
    * {@inheritdoc}
    */
   public function WktGeneratePolygon($start = NULL, $segments = NULL) {
-    return $this->buildWkt(GEOFIELD_TYPE_POLYGON, $this->generatePolygon($start, $segments));
+    return $this->WktBuildPolygon($this->generatePolygon($start, $segments));
+  }
+
+  /**
+   * Builds a polygon format string from an array of point components.
+   *
+   * @param array $points
+   *   Array containing the polygon components coordinates.
+   *
+   * @return string
+   *   The structured polygon coordinates.
+   */
+  protected function buildPolygon($points) {
+    $components = array();
+    foreach ($points as $point) {
+      $components[] = $this->buildPoint($point);
+    }
+    return '(' . implode(", ", $components) . ')';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function WktBuildPolygon($points) {
+    return $this->buildWkt(GEOFIELD_TYPE_POLYGON, $this->buildPolygon($points));
   }
 
   /**
@@ -241,12 +297,12 @@ class WktGenerator implements WktGeneratorInterface {
     $start = $this->randomPoint();
     $num = $this->DdGenerate(1, 5, TRUE);
     $segments = $this->DdGenerate(2, 3, TRUE);
-    $poly[] = $this->generatePolygon($start, $segments);
+    $poly[] = $this->buildPolygon($this->generatePolygon($start, $segments));
     for ($i = 0; $i < $num; $i += 1) {
       $diff = $this->randomPoint();
       $start[0] += $diff[0] / 100;
       $start[1] += $diff[1] / 100;
-      $poly[] = $this->generatePolygon($start, $segments);
+      $poly[] = $this->buildPolygon($this->generatePolygon($start, $segments));
     }
     return $this->buildMultiCoordinates($poly);
   }

@@ -25,6 +25,13 @@ use Drupal\Core\Form\FormStateInterface;
 class GeofieldLatLonWidget extends WidgetBase {
 
   /**
+   * Lat Lon widget components.
+   *
+   * @var array
+   */
+  public $components = array('lon', 'lat');
+
+  /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
@@ -61,15 +68,10 @@ class GeofieldLatLonWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $latlon_value = array(
-      'lat' => '',
-      'lon' => '',
-    );
-    if (isset($items[$delta]->lat)) {
-      $latlon_value['lat'] = floatval($items[$delta]->lat);
-    }
-    if (isset($items[$delta]->lon)) {
-      $latlon_value['lon'] = floatval($items[$delta]->lon);
+    $latlon_value = array();
+
+    foreach ($this->components as $component) {
+      $latlon_value[$component] = isset($items[$delta]->{$component}) ? floatval($items[$delta]->{$component}) : '';
     }
 
     $element += array(
@@ -87,12 +89,14 @@ class GeofieldLatLonWidget extends WidgetBase {
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     foreach ($values as $delta => $value) {
-      if (!empty($value['value']['lat']) && !empty($value['value']['lon']) && is_numeric($value['value']['lat']) && is_numeric($value['value']['lon'])) {
-        $values[$delta]['value'] = 'POINT(' . $value['value']['lon'] . ' ' . $value['value']['lat'] . ')';
+      foreach ($this->components as $component) {
+        if (empty($value['value'][$component]) && !is_numeric($value['value'][$component])) {
+          $values[$delta]['value'] = '';
+          continue 2;
+        }
       }
-      else {
-        $values[$delta]['value'] = '';
-      }
+      $components = $value['value'];
+      $values[$delta]['value'] = \Drupal::service('geofield.wkt_generator')->WktBuildPoint(array($components['lon'], $components['lat']));
     }
 
     return $values;

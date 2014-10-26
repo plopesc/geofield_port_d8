@@ -13,10 +13,10 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Plugin implementation of the 'geofield_formatter_default' formatter.
+ * Plugin implementation of the 'geofield_default' formatter.
  *
  * @FieldFormatter(
- *   id = "geofield_formatter_default",
+ *   id = "geofield_default",
  *   label = @Translation("Raw Output"),
  *   field_types = {
  *     "geofield"

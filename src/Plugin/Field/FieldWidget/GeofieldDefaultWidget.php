@@ -15,7 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Widget implementation of the 'geofield_default' widget.
  *
  * @FieldWidget(
- *   id = "geofield_widget_default",
+ *   id = "geofield_default",
  *   label = @Translation("Geofield"),
  *   field_types = {
  *     "geofield"

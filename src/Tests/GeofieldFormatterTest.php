@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\text\Tests\Formatter\TextFormatterTest.
+ * Contains \Drupal\geofield\Tests\GeofieldFormatterTest.
  */
 
-namespace Drupal\text\Tests\Formatter;
+namespace Drupal\geofield\Tests;
 
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\system\Tests\Entity\EntityUnitTestBase;
 
 /**
- * Tests the text formatters functionality.
+ * Tests the geofield formatters functionality.
  *
- * @group text
+ * @group geofield
  */
-class TextFormatterTest extends EntityUnitTestBase {
+class GeofieldFormatterTest extends EntityUnitTestBase {
 
   /**
    * The entity type used in this test.
@@ -36,7 +36,7 @@ class TextFormatterTest extends EntityUnitTestBase {
    *
    * @var array
    */
-  public static $modules = array('text');
+  public static $modules = array('geophp', 'geofield');
 
   /**
    * {@inheritdoc}
@@ -44,56 +44,38 @@ class TextFormatterTest extends EntityUnitTestBase {
   protected function setUp() {
     parent::setUp();
 
-    entity_create('filter_format', array(
-      'format' => 'my_text_format',
-      'name' => 'My text format',
-      'filters' => array(
-        'filter_autop' => array(
-          'module' => 'filter',
-          'status' => TRUE,
-        ),
-      ),
-    ))->save();
-
     entity_create('field_storage_config', array(
-      'field_name' => 'formatted_text',
+      'field_name' => 'geofield',
       'entity_type' => $this->entityType,
-      'type' => 'text',
-      'settings' => array(),
+      'type' => 'geofield',
+      'settings' => array(
+        'backend' => 'geofield_backend_default',
+      ),
     ))->save();
     entity_create('field_config', array(
       'entity_type' => $this->entityType,
       'bundle' => $this->bundle,
-      'field_name' => 'formatted_text',
-      'label' => 'Filtered text',
+      'field_name' => 'geofield',
+      'label' => 'GeoField',
     ))->save();
   }
 
   /**
-   * Tests all text field formatters.
+   * Tests geofield field default formatter.
    */
   public function testFormatters() {
-    $formatters = array(
-      'text_default',
-      'text_trimmed',
-      'text_summary_or_trimmed',
-    );
-
     // Create the entity to be referenced.
     $entity = entity_create($this->entityType, array('name' => $this->randomMachineName()));
-    $entity->formatted_text = array(
-      'value' => 'Hello, world!',
-      'format' => 'my_text_format',
+    $value = \Drupal::service('geofield.wkt_generator')->WktGenerateGeometry();
+    $entity->geofield = array(
+      'value' => $value,
     );
     $entity->save();
 
-    foreach ($formatters as $formatter) {
-      // Verify the text field formatter's render array.
-      $build = $entity->get('formatted_text')->view(array('type' => $formatter));
+      // Verify the geofield field formatter's render array.
+      $build = $entity->get('geofield')->view(array('type' => 'geofield_default'));
       drupal_render($build[0]);
-      $this->assertEqual($build[0]['#markup'], "<p>Hello, world!</p>\n");
-      $this->assertEqual($build[0]['#cache']['tags'], FilterFormat::load('my_text_format')->getCacheTag(), format_string('The @formatter formatter has the expected cache tags when formatting a formatted text field.', array('@formatter' => $formatter)));
-    }
+      $this->assertEqual($build[0]['#markup'], $value);
   }
 
 }
