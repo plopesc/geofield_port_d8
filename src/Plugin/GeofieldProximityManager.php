@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\geofield\Plugin\GeofieldBackendManager.
+ * Contains \Drupal\geofield\Plugin\GeofieldProximityManager.
  */
 
 namespace Drupal\geofield\Plugin;
@@ -12,12 +12,12 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Defines the plugin manager Geofield backends.
+ * Defines the plugin manager Geofield proximity.
  */
-class GeofieldBackendManager extends DefaultPluginManager {
+class GeofieldProximityManager extends DefaultPluginManager {
 
   /**
-   * Constructs a new \Drupal\geofield\Plugin\GeofieldBackendManager object.
+   * Constructs a new \Drupal\geofield\Plugin\GeofieldProximityManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -28,9 +28,9 @@ class GeofieldBackendManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/GeofieldBackend', $namespaces, $module_handler, 'Drupal\geofield\Plugin\GeofieldBackendPluginInterface', 'Drupal\geofield\Annotation\GeofieldBackend');
+    parent::__construct('Plugin/GeofieldProximity', $namespaces, $module_handler, 'Drupal\geofield\Plugin\GeofieldProximityPluginInterface', 'Drupal\geofield\Annotation\GeofieldProximity');
 
-    $this->alterInfo('geofield_backend');
-    $this->setCacheBackend($cache_backend, 'geofield_backend_plugins');
+    $this->alterInfo('geofield_proximity');
+    $this->setCacheBackend($cache_backend, 'geofield_proximity_plugins');
   }
 }

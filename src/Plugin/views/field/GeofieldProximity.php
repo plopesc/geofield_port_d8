@@ -7,17 +7,34 @@
 
 namespace Drupal\geofield\Plugin\views\field;
 
-use Drupal\Component\Annotation\PluginID;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\field\Numeric;
+use Drupal\views\ResultRow;
+use Drupal\views\ViewExecutable;
 
 /**
  * Field handler to render a Geofield proximity in Views.
  *
  * @ingroup views_field_handlers
  *
- * @PluginID("geofield_proximity")
+ * @ViewsField("geofield_proximity")
  */
 class GeofieldProximity extends Numeric {
+
+  /**
+   * @var \Drupal\geofield\Plugin\GeofieldProximityManager.
+   */
+  protected $proximityManager;
+
+  /**
+   * Constructs a Handler object.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->proximityManager = \Drupal::service('plugin.manager.geofield_proximity');
+  }
 
   /**
    * {@inheritdoc}.
@@ -28,8 +45,8 @@ class GeofieldProximity extends Numeric {
     // Data sources and info needed.
     $options['source'] = array('default' => 'manual');
 
-    foreach (geofield_proximity_views_handlers() as $key => $handler) {
-      $proximityPlugin = geofield_proximity_load_plugin($key);
+    foreach ($this->proximityManager->getDefinitions() as $key => $handler) {
+      $proximityPlugin = $this->proximityManager->createInstance($key);
       $proximityPlugin->option_definition($options, $this);
     }
 
@@ -40,7 +57,7 @@ class GeofieldProximity extends Numeric {
   /**
    * {@inheritdoc}.
    */
-  public function buildOptionsForm(&$form, &$form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
 
     $form['source'] = array(
@@ -51,10 +68,9 @@ class GeofieldProximity extends Numeric {
       '#default_value' => $this->options['source'],
     );
 
-    $proximityHandlers = geofield_proximity_views_handlers();
-    foreach ($proximityHandlers as $key => $handler) {
-      $form['source']['#options'][$key] = $handler['name'];
-      $proximityPlugin = geofield_proximity_load_plugin($key);
+    foreach ($this->proximityManager->getDefinitions() as $key => $handler) {
+      $form['source']['#options'][$key] = $handler['admin_label'];
+      $proximityPlugin = $this->proximityManager->createInstance($key);
       $proximityPlugin->options_form($form, $form_state, $this);
     }
 
@@ -70,15 +86,15 @@ class GeofieldProximity extends Numeric {
   /**
    * {@inheritdoc}.
    */
-  public function validateOptionsForm(&$form, &$form_state) {
-    $proximityPlugin = geofield_proximity_load_plugin($form_state['values']['options']['source']);
+  public function validateOptionsForm(&$form, FormStateInterface $form_state) {
+    $proximityPlugin = $this->proximityManager->createInstance($form_state->getValue(array('options', 'source')));
     $proximityPlugin->options_validate($form, $form_state, $this);
   }
 
   /**
    * {@inheritdoc}.
    */
-  public function getValue($values, $field = NULL) {
+  public function getValue(ResultRow $values, $field = NULL) {
     if (isset($values->{$this->field_alias})) {
       return $values->{$this->field_alias};
     }
@@ -93,7 +109,7 @@ class GeofieldProximity extends Numeric {
     $lat_alias = $this->tableAlias . '.' . $this->definition['field_name'] . '_lat';
     $lon_alias = $this->tableAlias . '.' . $this->definition['field_name'] . '_lon';
 
-    $proximityPlugin = geofield_proximity_load_plugin($this->options['source']);
+    $proximityPlugin = $this->proximityManager->createInstance($this->options['source']);
     $options = $proximityPlugin->getSourceValue($this);
 
     if ($options != FALSE) {
@@ -105,7 +121,7 @@ class GeofieldProximity extends Numeric {
         'earth_radius' => $this->options['radius_of_earth'],
       );
 
-      $this->field_alias = $this->query->add_field(NULL, geofield_haversine($haversine_options), $this->tableAlias . '_' . $this->field);
+      $this->field_alias = $this->query->addField(NULL, geofield_haversine($haversine_options), $this->tableAlias . '_' . $this->field);
     }
   }
 

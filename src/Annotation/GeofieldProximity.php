@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\geofield\Annotation\GeofieldBackend.
+ * Contains \Drupal\geofield\Annotation\GeofieldProximity.
  */
 
 namespace Drupal\geofield\Annotation;
@@ -10,13 +10,13 @@ namespace Drupal\geofield\Annotation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines a GeofieldBackend annotation object.
+ * Defines a GeofieldProximity annotation object.
  *
  * @ingroup geofield_api
  *
  * @Annotation
  */
-class GeofieldBackend extends Plugin {
+class GeofieldProximity extends Plugin {
 
   /**
    * The plugin ID.
@@ -26,7 +26,7 @@ class GeofieldBackend extends Plugin {
   public $id;
 
   /**
-   * The administrative label of the geofield backend.
+   * The administrative label of the geofield proximity.
    *
    * @var \Drupal\Core\Annotation\Translation
    *

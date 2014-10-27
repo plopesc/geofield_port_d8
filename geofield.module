@@ -128,3 +128,35 @@ function theme_geofield_proximity($vars) {
 
   return $output;
 }
+
+/**
+ * Haversine formula, useful for injecting into an SQL statement. In instances where it isn't possible to pass in variables dynamically (i.e. field
+ *   definitions), this function will bake in values directly into the snippet.
+ *
+ * @param $options
+ *   An array of parameters that can be passed along to be injected directly into the SQL snippet. The following array keys are checked...
+ *     - origin_latitude
+ *     - origin_longitude
+ *     - destination_latitude
+ *     - destination_longitude
+ *     - earth_radius
+ *
+ * @return string
+ *   A string suitable for injection into DBTNG. Any option passed into the function will be baked into the string directly. Any variable missing will
+ *     be represented as :[variable]. (i.e. :earth_radius).
+ */
+
+function geofield_haversine($options = array()) {
+  $formula = '( :earth_radius * ACOS( COS( RADIANS(:origin_latitude) ) * COS( RADIANS(:destination_latitude) ) * COS( RADIANS(:destination_longitude) - RADIANS(:origin_longitude) ) + SIN( RADIANS(:origin_latitude) ) * SIN( RADIANS(:destination_latitude) ) ) )';
+
+  foreach ($options as $key => $option) {
+    if (is_numeric($option)) {
+      $formula = str_replace(':' . $key, $option, $formula);
+    }
+    else {
+      $formula = str_replace(':' . $key, db_escape_field($option), $formula);
+    }
+  }
+
+  return $formula;
+}

@@ -1,7 +1,11 @@
 services:
   plugin.manager.geofield_backend:
-      class: Drupal\geofield\Plugin\GeofieldBackendManager
-      parent: default_plugin_manager
+    class: Drupal\geofield\Plugin\GeofieldBackendManager
+    parent: default_plugin_manager
+
+  plugin.manager.geofield_proximity:
+    class: Drupal\geofield\Plugin\GeofieldProximityManager
+    parent: default_plugin_manager
 
   geofield.wkt_generator:
     class: Drupal\geofield\WktGenerator

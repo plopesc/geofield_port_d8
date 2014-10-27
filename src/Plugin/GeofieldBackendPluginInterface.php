@@ -43,4 +43,5 @@ interface GeofieldBackendPluginInterface extends PluginInspectionInterface {
    * @return string
    */
   public function load($geometry);
+
 }
