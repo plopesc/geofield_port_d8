@@ -28,14 +28,17 @@ class GeofieldProximity extends SortPluginBase {
   protected $proximityManager;
 
   /**
-   * Overrides Drupal\views\Plugin\views\field\FieldPluginBase::init().
+   * Constructs a Handler object.
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
-    parent::init($view, $display, $options);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->proximityManager = \Drupal::service('plugin.manager.geofield_proximity');
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   protected function defineOptions() {
     $options = parent::defineOptions();
     // Data sources and info needed.
@@ -43,12 +46,15 @@ class GeofieldProximity extends SortPluginBase {
 
     foreach ($this->proximityManager->getDefinitions() as $key => $handler) {
       $proximityPlugin = $this->proximityManager->createInstance($key);
-      $proximityPlugin->option_definition($options, $this);
+      $proximityPlugin->defineOptions($options, $this);
     }
 
     return $options;
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   function query() {
     $this->ensureMyTable();
     $lat_alias = $this->tableAlias . '.' . $this->definition['field_name'] . '_lat';
@@ -69,6 +75,9 @@ class GeofieldProximity extends SortPluginBase {
     }
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
 
@@ -84,12 +93,15 @@ class GeofieldProximity extends SortPluginBase {
     foreach ($proximityHandlers as $key => $handler) {
       $form['source']['#options'][$key] = $handler['name'];
       $proximityPlugin = $this->proximityManager->createInstance($key);
-      $proximityPlugin->options_form($form, $form_state, $this);
+      $proximityPlugin->buildOptionsForm($form, $form_state, $this);
     }
   }
 
-  function validateOptionsForm(&$form, &$form_state) {
+  /**
+   * {@inheritdoc}.
+   */
+  function validateOptionsForm(&$form, FormStateInterface $form_state) {
     $proximityPlugin = $this->proximityManager->createInstance($form_state['values']['options']['source']);
-    $proximityPlugin->options_validate($form, $form_state, $this);
+    $proximityPlugin->validateOptionsForm($form, $form_state, $this);
   }
 }

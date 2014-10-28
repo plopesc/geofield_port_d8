@@ -7,7 +7,10 @@
 
 namespace Drupal\geofield\Plugin\GeofieldProximity;
 
+use Drupal\Core\Entity\ContentEntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\geofield\Plugin\GeofieldProximityBase;
+use Drupal\views\Plugin\views\ViewsHandlerInterface;
 
 /**
  * Entity from URL proximity implementation for Geofield.
@@ -20,9 +23,9 @@ use Drupal\geofield\Plugin\GeofieldProximityBase;
 class GeofieldProximityEntityURL extends GeofieldProximityBase {
 
   /**
-   * @{@inheritdoc}
+   * {@inheritdoc}
    */
-  public function option_definition(&$options, $views_plugin) {
+  public function defineOptions(array &$options, ViewsHandlerInterface $views_plugin) {
     $options['geofield_proximity_entity_url_entity_type'] = array(
       'default' => 'node',
     );
@@ -35,13 +38,16 @@ class GeofieldProximityEntityURL extends GeofieldProximityBase {
   }
 
   /**
-   * @{@inheritdoc}
+   * {@inheritdoc}
    */
-  public function options_form(&$form, &$form_state, $views_plugin) {
-    $entities = entity_get_info();
+  public function buildOptionsForm(array &$form, FormStateInterface &$form_state, ViewsHandlerInterface $views_plugin) {
+    $entities = \Drupal::entityManager()->getDefinitions();
+    $geofields = \Drupal::entityManager()->getFieldMapByFieldType('geofield');
     $entity_options = array();
     foreach ($entities as $key => $entity) {
-      $entity_options[$key] = $entity['label'];
+      if (isset($geofields[$key])) {
+        $entity_options[$key] = $entity->getLabel();
+      }
     }
 
     $form['geofield_proximity_entity_url_entity_type'] = array(
@@ -49,13 +55,20 @@ class GeofieldProximityEntityURL extends GeofieldProximityBase {
       '#title' => t('Entity Type'),
       '#default_value' => $views_plugin->options['geofield_proximity_entity_url_entity_type'],
       '#options' => $entity_options,
-      '#states' => array('visible' => array(
-				 '#edit-options-source' => array('value' => 'entity_from_url')))
+      '#states' => array(
+        'visible' => array(
+          ':input[name="options[source]"]' => array('value' => 'entity_from_url')
+        )
+      ),
+      '#ajax' => array(
+        'path' => views_ui_build_form_path($form_state),
+      ),
+      '#submit' => array(array($views_plugin, 'submitTemporaryForm')),
+      '#executes_submit_callback' => TRUE,
     );
 
-    $geofields = _geofield_get_geofield_fields();
     $field_options = array();
-    foreach ($geofields as $key => $field) {
+    foreach ($geofields[$views_plugin->options['geofield_proximity_entity_url_entity_type']] as $key => $field) {
       $field_options[$key] = $key;
     }
 
@@ -64,20 +77,23 @@ class GeofieldProximityEntityURL extends GeofieldProximityBase {
       '#title' => t('Source Field'),
       '#default_value' => $views_plugin->options['geofield_proximity_entity_url_field'],
       '#options' => $field_options,
-      '#states' => array('visible' => array(
-			  '#edit-options-source' => array('value' => 'entity_from_url')))
+      '#states' => array(
+        'visible' => array(
+          ':input[name="options[source]"]' => array('value' => 'entity_from_url')
+        )
+      )
     );
   }
 
   /**
-   * @{@inheritdoc}
+   * {@inheritdoc}
    */
-  public function getSourceValue($views_plugin) {
+  public function getSourceValue(ViewsHandlerInterface $views_plugin) {
     $entity_type = $views_plugin->options['geofield_proximity_entity_url_entity_type'];
     $geofield_name = $views_plugin->options['geofield_proximity_entity_url_field'];
     $delta = $views_plugin->options['geofield_proximity_entity_url_delta'];
 
-    $entity = menu_get_object($entity_type);
+    /*$entity = menu_get_object($entity_type);
     if (isset($entity) && !empty($geofield_name)) {
       $field_data = field_get_items($entity, $geofield_name);
 
@@ -87,7 +103,7 @@ class GeofieldProximityEntityURL extends GeofieldProximityBase {
           'longitude' => $field_data[$delta]['lon'],
         );
       }
-    }
+    }*/
 
     return FALSE;
   }

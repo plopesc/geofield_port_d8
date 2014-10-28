@@ -8,9 +8,10 @@
 namespace Drupal\geofield\Plugin\GeofieldProximity;
 
 use Drupal\geofield\Plugin\GeofieldProximityBase;
+use Drupal\views\Plugin\views\ViewsHandlerInterface;
 
 /**
- * Exposed Geofield Proximity Filter proximity implementation for Geofield.
+ * Exposed Geofield Proximity Filter implementation for Geofield.
  *
  * @GeofieldProximity(
  *   id = "exposed_geofield",
@@ -20,9 +21,9 @@ use Drupal\geofield\Plugin\GeofieldProximityBase;
 class GeofieldProximityExposedFilter extends GeofieldProximityBase {
 
   /**
-   * @{@inheritdoc}
+   * {@inheritdoc}
    */
-  public function getSourceValue($views_plugin) {
+  public function getSourceValue(ViewsHandlerInterface $views_plugin) {
     $exposedFilter = $views_plugin->view->display_handler->getHandler('filter', 'field_geofield_distance');
     if ($exposedFilter) {
       $filterProximityPlugin = $this->proximityManager->createInstance($exposedFilter->options['source']);

@@ -28,19 +28,17 @@ class GeofieldProximity extends Numeric {
   protected $proximityManager;
 
   /**
-   * Overrides \Drupal\views\Plugin\views\HandlerBase::init().
-   *
-   * Provide some extra help to get the operator/value easier to use.
-   *
-   * This likely has to be overridden by filters which are more complex
-   * than simple operator/value.
+   * Constructs a Handler object.
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
-    parent::init($view,$display, $options);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->proximityManager = \Drupal::service('plugin.manager.geofield_proximity');
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   protected function defineOptions() {
     $options = parent::defineOptions();
 
@@ -57,12 +55,15 @@ class GeofieldProximity extends Numeric {
 
     foreach ($this->proximityManager->getDefinitions() as $key => $handler) {
       $proximityPlugin = $this->proximityManager->createInstance($key);
-      $proximityPlugin->option_definition($options, $this);
+      $proximityPlugin->defineOptions($options, $this);
     }
 
     return $options;
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   public function operators() {
     $operators = array(
       '<' => array(
@@ -118,6 +119,9 @@ class GeofieldProximity extends Numeric {
     return $operators;
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   public function query() {
     $proximityPlugin = $this->proximityManager->createInstance($this->options['source']);
     $options = $proximityPlugin->getSourceValue($this);
@@ -141,14 +145,23 @@ class GeofieldProximity extends Numeric {
     }
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   protected function opBetween($options) {
     $this->query->add_where_expression($this->options['group'], geofield_haversine($options) . ' ' . strtoupper($this->operator) . ' ' . $this->value['distance'] . ' AND ' . $this->value['distance2']);
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   protected function opSimple($options) {
     $this->query->add_where_expression($this->options['group'], geofield_haversine($options) . ' ' . $this->operator . ' ' . $this->value['distance']);
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
     $form['source'] = array(
@@ -176,7 +189,7 @@ class GeofieldProximity extends Numeric {
         $form['source']['#options'][$key] = $handler['name'];
 
         $proximityPlugin = $this->proximityManager->createInstance($key);
-        $proximityPlugin->options_form($form, $form_state, $this);
+        $proximityPlugin->buildOptionsForm($form, $form_state, $this);
       }
     }
 
@@ -189,12 +202,18 @@ class GeofieldProximity extends Numeric {
     }
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   public function validateOptionsForm(&$form, FormStateInterface $form_state) {
     parent::validateOptionsForm($form, $form_state);
     $proximityPlugin = $this->proximityManager->createInstance($form_state['values']['options']['source']);
-    $proximityPlugin->options_validate($form, $form_state, $this);
+    $proximityPlugin->validateOptionsForm($form, $form_state, $this);
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   protected function valueForm(&$form, FormStateInterface $form_state) {
     $form['value'] = array(
       '#type' => 'geofield_proximity',
@@ -212,7 +231,7 @@ class GeofieldProximity extends Numeric {
     );
 
     $proximityPlugin = $this->proximityManager->createInstance($this->options['source']);
-    $proximityPlugin->value_form($form, $form_state, $this);
+    $proximityPlugin->valueForm($form, $form_state, $this);
 
     if (in_array($this->operator, array('between', 'not between'))) {
       $form['value']['#geofield_range'] = TRUE;
@@ -220,12 +239,18 @@ class GeofieldProximity extends Numeric {
     }
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   protected function valueValidate($form, FormStateInterface $form_state) {
     parent::valueValidate($form, $form_state);
     $proximityPlugin = $this->proximityManager->createInstance($form_state['values']['options']['source']);
-    $proximityPlugin->value_validate($form, $form_state, $this);
+    $proximityPlugin->valueValidate($form, $form_state, $this);
   }
 
+  /**
+   * {@inheritdoc}.
+   */
   public function adminSummary() {
     if (!empty($this->options['exposed'])) {
       return t('exposed');
@@ -246,6 +271,7 @@ class GeofieldProximity extends Numeric {
    * Check to see if input from the exposed filters should change
    * the behavior of this filter.
    *   - @TODO: This could be more polished.
+   * {@inheritdoc}
    */
   public function acceptExposedInput($input) {
     if (!(isset($this->options['expose']) && isset($this->options['expose']['identifier']))) {
@@ -262,7 +288,7 @@ class GeofieldProximity extends Numeric {
     $this->value['origin'] = $input[$input_id]['origin'];
     return TRUE;
   }
-} // class GeofieldProximity
+}
 
 function geofield_views_ui_change_proximity_widget($form, FormStateInterface $form_state) {
   $item = &$form_state['handler']->options;

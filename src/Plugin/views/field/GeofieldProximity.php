@@ -47,7 +47,7 @@ class GeofieldProximity extends Numeric {
 
     foreach ($this->proximityManager->getDefinitions() as $key => $handler) {
       $proximityPlugin = $this->proximityManager->createInstance($key);
-      $proximityPlugin->option_definition($options, $this);
+      $proximityPlugin->defineOptions($options, $this);
     }
 
     $options['radius_of_earth'] = array('default' => GEOFIELD_KILOMETERS);
@@ -71,7 +71,7 @@ class GeofieldProximity extends Numeric {
     foreach ($this->proximityManager->getDefinitions() as $key => $handler) {
       $form['source']['#options'][$key] = $handler['admin_label'];
       $proximityPlugin = $this->proximityManager->createInstance($key);
-      $proximityPlugin->options_form($form, $form_state, $this);
+      $proximityPlugin->buildOptionsForm($form, $form_state, $this);
     }
 
     $form['radius_of_earth'] = array(
@@ -88,7 +88,7 @@ class GeofieldProximity extends Numeric {
    */
   public function validateOptionsForm(&$form, FormStateInterface $form_state) {
     $proximityPlugin = $this->proximityManager->createInstance($form_state->getValue(array('options', 'source')));
-    $proximityPlugin->options_validate($form, $form_state, $this);
+    $proximityPlugin->validateOptionsForm($form, $form_state, $this);
   }
 
   /**

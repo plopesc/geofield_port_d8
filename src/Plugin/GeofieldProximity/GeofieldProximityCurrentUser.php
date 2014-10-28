@@ -7,7 +7,11 @@
 
 namespace Drupal\geofield\Plugin\GeofieldProximity;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\geofield\Plugin\GeofieldProximityBase;
+use Drupal\user\Entity\User;
+use Drupal\views\Plugin\views\HandlerBase;
+use Drupal\views\Plugin\views\ViewsHandlerInterface;
 
 /**
  * Current user proximity implementation for Geofield.
@@ -20,9 +24,9 @@ use Drupal\geofield\Plugin\GeofieldProximityBase;
 class GeofieldProximityCurrentUser extends GeofieldProximityBase {
 
   /**
-   * @{@inheritdoc}
+   * {@inheritdoc}
    */
-  public function option_definition(&$options, $views_plugin) {
+  public function defineOptions(array &$options, ViewsHandlerInterface $views_plugin) {
     $options['geofield_proximity_current_user_field'] = array(
       'default' => '',
     );
@@ -32,13 +36,15 @@ class GeofieldProximityCurrentUser extends GeofieldProximityBase {
   }
 
   /**
-   * @{@inheritdoc}
+   * {@inheritdoc}
    */
-  public function options_form(&$form, &$form_state, $views_plugin) {
+  public function buildOptionsForm(array &$form, FormStateInterface &$form_state, ViewsHandlerInterface $views_plugin) {
     $geofields = \Drupal::entityManager()->getFieldMapByFieldType('geofield');
     $field_options = array();
-    foreach ($geofields as $entity_type => $fields) {
-      $field_options[$key] = $key;
+    if (isset ($geofieds['user'])) {
+      foreach ($geofields['user'] as $key => $value) {
+        $field_options[$key] = $key;
+      }
     }
 
     $form['geofield_proximity_current_user_field'] = array(
@@ -46,17 +52,20 @@ class GeofieldProximityCurrentUser extends GeofieldProximityBase {
       '#title' => t('Source Field'),
       '#default_value' => $views_plugin->options['geofield_proximity_current_user_field'],
       '#options' => $field_options,
-      '#states' => array('visible' => array(
-				'#edit-options-source' => array('value' => 'current_user')))
+      '#states' => array(
+        'visible' => array(
+          ':input[name="options[source]"]' => array('value' => 'current_user')
+        )
+      )
     );
   }
 
   /**
-   * @{@inheritdoc}
+   * {@inheritdoc}
    */
-  public function getSourceValue($views_plugin) {
+  public function getSourceValue(ViewsHandlerInterface $views_plugin) {
     global $user;
-    $user_object = user_load($user->uid);
+    $user_object = User::load($user->uid);
 
     $geofield_name = $views_plugin->options['geofield_proximity_current_user_field'];
     $delta = $views_plugin->options['geofield_proximity_current_user_delta'];
