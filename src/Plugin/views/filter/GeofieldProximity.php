@@ -256,12 +256,12 @@ class GeofieldProximity extends Numeric {
       return t('exposed');
     }
 
-    $options = $this->operator_options('short');
+    $options = $this->operatorOptions('short');
     $output = check_plain($options[$this->operator]);
-    if (in_array($this->operator, $this->operator_values(2))) {
+    if (in_array($this->operator, $this->operatorValues(2))) {
       $output .= ' ' . t('@min and @max', array('@min' => $this->value['distance'], '@max' => $this->value['distance2']));
     }
-    elseif (in_array($this->operator, $this->operator_values(1))) {
+    elseif (in_array($this->operator, $this->operatorValues(1))) {
       $output .= ' ' . check_plain($this->value['distance']);
     }
     return $output;
