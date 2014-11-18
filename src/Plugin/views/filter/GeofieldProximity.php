@@ -18,7 +18,7 @@ use Drupal\views\ViewExecutable;
  *
  * @ingroup views_field_handlers
  *
- * @PluginID("geofield_proximity")
+ * @ViewsFilter("geofield_proximity")
  */
 class GeofieldProximity extends Numeric {
 
