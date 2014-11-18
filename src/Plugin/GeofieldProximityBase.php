@@ -7,7 +7,9 @@
 
 namespace Drupal\geofield\Plugin;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\views\Plugin\views\ViewsHandlerInterface;
 
 /**
  * Defines a base class from which other modules providing geofield proximity
@@ -32,32 +34,32 @@ abstract class GeofieldProximityBase extends PluginBase implements GeofieldProxi
   /**
    * {@inheritdoc}
    */
-  public function defineOptions(&$options, $views_plugin) { }
+  public function defineOptions(array &$options, ViewsHandlerInterface $views_plugin) { }
 
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, &$form_state, $views_plugin) { }
+  public function buildOptionsForm(array &$form, FormStateInterface &$form_state, ViewsHandlerInterface $views_plugin) { }
 
   /**
    * {@inheritdoc}
    */
-  public function validateOptionsForm(&$form, &$form_state, $views_plugin) { }
+  public function validateOptionsForm(array &$form, FormStateInterface &$form_state, ViewsHandlerInterface $views_plugin) { }
 
   /**
    * {@inheritdoc}
    */
-  public function valueForm(&$form, &$form_state, $views_plugin) { }
+  public function valueForm(array &$form, FormStateInterface &$form_state, ViewsHandlerInterface $views_plugin) { }
 
   /**
    * {@inheritdoc}
    */
-  public function valueValidate(&$form, &$form_state, $views_plugin) { }
+  public function valueValidate(array &$form, FormStateInterface &$form_state, ViewsHandlerInterface $views_plugin) { }
 
   /**
    * {@inheritdoc}
    */
-  public function getSourceValue($views_plugin) {
+  public function getSourceValue(ViewsHandlerInterface $views_plugin) {
     return array(
       'latitude' => 0,
       'longitude' => 0,
