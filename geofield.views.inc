@@ -38,6 +38,7 @@ function geofield_field_views_data(FieldStorageConfigInterface $field_storage) {
           'handler' => 'geofield_handler_sort',
           'field_name' => $field_name,
           'real_field' => $table_name,
+          'id' => 'geofield_proximity',
         ),
         'field' => array(
           'field' => 'field_geofield_distance',
@@ -55,6 +56,7 @@ function geofield_field_views_data(FieldStorageConfigInterface $field_storage) {
           'handler' => 'geofield_handler_filter',
           'field_name' => $field_name,
           'real_field' => $table_name,
+          'id' => 'geofield_proximity',
         ),
       );
     }

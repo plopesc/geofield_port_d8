@@ -8,6 +8,7 @@
 namespace Drupal\geofield\Plugin\views\filter;
 
 use Drupal\Component\Annotation\PluginID;
+use Drupal\Component\Utility\String;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\filter\Numeric;
@@ -18,7 +19,7 @@ use Drupal\views\ViewExecutable;
  *
  * @ingroup views_field_handlers
  *
- * @PluginID("geofield_proximity")
+ * @ViewsFilter("geofield_proximity")
  */
 class GeofieldProximity extends Numeric {
 
@@ -156,7 +157,7 @@ class GeofieldProximity extends Numeric {
    * {@inheritdoc}.
    */
   protected function opSimple($options) {
-    $this->query->add_where_expression($this->options['group'], geofield_haversine($options) . ' ' . $this->operator . ' ' . $this->value['distance']);
+    $this->query->addWhereExpression($this->options['group'], geofield_haversine($options) . ' ' . $this->operator . ' ' . $this->value['distance']);
   }
 
   /**
@@ -256,13 +257,13 @@ class GeofieldProximity extends Numeric {
       return t('exposed');
     }
 
-    $options = $this->operator_options('short');
-    $output = check_plain($options[$this->operator]);
-    if (in_array($this->operator, $this->operator_values(2))) {
+    $options = $this->operatorOptions('short');
+    $output = String::checkPlain($options[$this->operator]);
+    if (in_array($this->operator, $this->operatorValues(2))) {
       $output .= ' ' . t('@min and @max', array('@min' => $this->value['distance'], '@max' => $this->value['distance2']));
     }
-    elseif (in_array($this->operator, $this->operator_values(1))) {
-      $output .= ' ' . check_plain($this->value['distance']);
+    elseif (in_array($this->operator, $this->operatorValues(1))) {
+      $output .= ' ' . String::checkPlain($this->value['distance']);
     }
     return $output;
   }
