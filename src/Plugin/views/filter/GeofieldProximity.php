@@ -8,6 +8,7 @@
 namespace Drupal\geofield\Plugin\views\filter;
 
 use Drupal\Component\Annotation\PluginID;
+use Drupal\Component\Utility\String;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\filter\Numeric;
@@ -257,12 +258,12 @@ class GeofieldProximity extends Numeric {
     }
 
     $options = $this->operatorOptions('short');
-    $output = check_plain($options[$this->operator]);
+    $output = String::checkPlain($options[$this->operator]);
     if (in_array($this->operator, $this->operatorValues(2))) {
       $output .= ' ' . t('@min and @max', array('@min' => $this->value['distance'], '@max' => $this->value['distance2']));
     }
     elseif (in_array($this->operator, $this->operatorValues(1))) {
-      $output .= ' ' . check_plain($this->value['distance']);
+      $output .= ' ' . String::checkPlain($this->value['distance']);
     }
     return $output;
   }
