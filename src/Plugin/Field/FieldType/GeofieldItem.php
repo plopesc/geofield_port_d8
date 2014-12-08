@@ -215,7 +215,7 @@ class GeofieldItem extends FieldItemBase {
       $this->top = $bounding['maxy'];
       $this->right = $bounding['maxx'];
       $this->bottom = $bounding['miny'];
-      $this->geohash = $geom->out('geohash');
+      $this->geohash = substr($geom->out('geohash'), 0, GEOFIELD_GEOHASH_LENGTH);
     }
   }
 
