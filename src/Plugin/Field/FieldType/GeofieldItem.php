@@ -9,7 +9,6 @@ namespace Drupal\geofield\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
-use geoPHP;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
@@ -201,8 +200,7 @@ class GeofieldItem extends FieldItemBase {
    * Populates computed variables.
    */
   protected function populateComputedValues() {
-    \Drupal::service('geophp.geophp');
-    $geom = geoPHP::load($this->value);
+    $geom = \Drupal::service('geophp.geophp')->load($this->value);
 
     if (!empty($geom)) {
       $centroid = $geom->getCentroid();

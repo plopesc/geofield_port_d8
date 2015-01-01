@@ -7,7 +7,6 @@
 
 namespace Drupal\geofield\Plugin\Validation\Constraint;
 
-use geoPHP;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\ExecutionContextInterface;
@@ -51,7 +50,7 @@ class GeoConstraint extends Constraint implements ConstraintValidatorInterface {
       $valid_geometry = TRUE;
 
       try {
-        if (!geoPHP::load($value, 'wkt')) {
+        if (!\Drupal::service('geophp.geophp')->load($value, 'wkt')) {
           $valid_geometry = FALSE;
         }
       }
