@@ -68,7 +68,7 @@ class GeofieldLatLon extends GeofieldElementBase {
     static::elementProcess($element, $form_state, $complete_form);
 
     if (!empty($element['#geolocation']) && $element['#geolocation'] == TRUE) {
-      $element['#attached']['js'][] = drupal_get_path('module', 'geofield') . '/js/geolocation.js';
+      $element['#attached']['library'][] = 'geofield/geolocation';
       $element['geocode'] = array(
         '#type' => 'button',
         '#value' => t('Find my location'),
