@@ -146,6 +146,9 @@ class GeofieldItem extends FieldItemBase {
     $properties['geohash'] = DataDefinition::create('string')
       ->setLabel(t('Geohash'));
 
+    $properties['latlon'] = DataDefinition::create('string')
+      ->setLabel(t('LatLong Pair'));
+
     return $properties;
   }
 
@@ -214,6 +217,7 @@ class GeofieldItem extends FieldItemBase {
       $this->right = $bounding['maxx'];
       $this->bottom = $bounding['miny'];
       $this->geohash = substr($geom->out('geohash'), 0, GEOFIELD_GEOHASH_LENGTH);
+      $this->latlon = $centroid->getY() . ',' . $centroid->getX();
     }
   }
 
