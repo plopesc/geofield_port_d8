@@ -14,7 +14,7 @@ use Symfony\Component\Validator\ExecutionContextInterface;
 /**
  * Validation constraint for geospatial values.
  *
- * @Plugin(
+ * @Constraint(
  *   id = "GeoType",
  *   label = @Translation("Geo data valid for geofield type.", context = "Validation"),
  * )
